@@ -24,13 +24,13 @@ function App() {
           {/* Video Section */}
           <div className="max-w-4xl mx-auto mb-8">
             <div className="rounded-lg overflow-hidden shadow-2xl bg-gray-100">
-              <div style={{ position: 'relative', overflow: 'hidden', width: '100%', height: '0', paddingBottom: '56.25%' }}>
+              <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '1920/1080' }}>
                 <iframe
-                  src="https://share.synthesia.io/embeds/videos/9556b5b6-6cee-4cf1-a8d9-1b3dc50eb7ad"
+                  src="https://share.synthesia.io/embeds/videos/ed600396-5007-4059-805c-74c8705d1c16?autoplay=1"
                   loading="lazy"
                   title="Synthesia video player - AI Keynote"
                   allowFullScreen
-                  allow="encrypted-media; fullscreen;"
+                  allow="encrypted-media; fullscreen; autoplay;"
                   style={{
                     position: 'absolute',
                     width: '100%',
@@ -39,7 +39,8 @@ function App() {
                     left: 0,
                     border: 'none',
                     padding: 0,
-                    margin: 0
+                    margin: 0,
+                    overflow: 'hidden'
                   }}
                 />
               </div>
