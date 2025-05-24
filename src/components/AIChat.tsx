@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 
 interface Message {
@@ -216,12 +215,7 @@ export default function AIChat({ className = '' }: AIChatProps) {
   };
 
   return (
-    <motion.div
-      className={`glassmorphic-card overflow-hidden ${className}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
+    <div className={`bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden ${className}`}>
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -470,6 +464,6 @@ export default function AIChat({ className = '' }: AIChatProps) {
           </div>
         </form>
       </div>
-    </motion.div>
+    </div>
   );
 }

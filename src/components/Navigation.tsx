@@ -1,18 +1,11 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <motion.header
-      className="fixed top-0 left-0 right-0 glassmorphic-card z-30"
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      style={{ borderRadius: 0, borderBottom: '1px solid rgba(255, 255, 255, 0.18)' }}
-    >
+    <header className="fixed top-0 left-0 right-0 bg-white bg-opacity-95 backdrop-blur-sm border-b border-gray-200 z-30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center py-4">
           {/* Logo */}
@@ -96,6 +89,6 @@ export default function Navigation() {
           </div>
         </div>
       )}
-    </motion.header>
+    </header>
   );
 }

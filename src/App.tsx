@@ -1,26 +1,7 @@
 import LightWavesBackground from './components/StarryBackground';
 import Navigation from './components/Navigation';
 import AIChat from './components/AIChat';
-import CardSection from './components/CardSection';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-
-// Animation variants for sections
-const sectionVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8 } }
-};
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.3
-    }
-  }
-};
 
 function App() {
   return (
@@ -31,16 +12,8 @@ function App() {
       {/* Navigation */}
       <Navigation />
 
-      <motion.div
-        className="container max-w-6xl mx-auto z-10 px-4 py-10 mt-24 mb-10"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div
-          className="text-center mb-16"
-          variants={sectionVariants}
-        >
+      <div className="container max-w-6xl mx-auto z-10 px-4 py-10 mt-24 mb-10">
+        <div className="text-center mb-16">
           <h1 className="text-5xl md:text-6xl font-semibold mb-6 tracking-tight">
             Welcome to <span className="sitecore-gradient-text">Sitecore.ai</span>
           </h1>
@@ -73,29 +46,13 @@ function App() {
               </div>
             </div>
           </div>
-        </motion.div>
-
-        {/* Feature Cards Section */}
-        <motion.div
-          className="mb-16"
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          <CardSection />
-        </motion.div>
+        </div>
 
         {/* AI Chat Section */}
-        <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-        >
+        <div>
           <AIChat className="mb-16" />
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       <footer className="mt-8 text-center text-sm text-gray-500 w-full">
         <div className="border-t border-gray-200 pt-8 pb-10 w-full max-w-lg mx-auto px-4">
