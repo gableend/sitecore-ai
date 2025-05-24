@@ -39,10 +39,7 @@ export default function AIChat({ className = '' }: AIChatProps) {
     }
   }, [messages]);
 
-  // Focus input on mount
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+  // Don't auto-focus input on mount to prevent page scroll
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
