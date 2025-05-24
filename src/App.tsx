@@ -46,12 +46,11 @@ function App() {
               </div>
             </div>
           </div>
+
         </div>
 
         {/* AI Chat Section */}
-        <div>
-          <AIChat className="mb-16" />
-        </div>
+        <AIChat className="mb-16" />
       </div>
 
       <footer className="mt-8 text-center text-sm text-gray-500 w-full">
