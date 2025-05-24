@@ -1,23 +1,11 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
 
 export default function CardSection() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl mx-auto">
       {/* Agentic Experience Card */}
-      <motion.div
-        className="glassmorphic-card overflow-hidden group"
-        variants={cardVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-      >
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden group">
         <div className="relative h-56 overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center transform transition-transform duration-700 ease-in-out group-hover:scale-110"
@@ -48,16 +36,10 @@ export default function CardSection() {
             </svg>
           </Link>
         </div>
-      </motion.div>
+      </div>
 
       {/* Symposium 2025 Card */}
-      <motion.div
-        className="glassmorphic-card overflow-hidden group"
-        variants={cardVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-      >
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden group">
         <div className="relative h-56 overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center transform transition-transform duration-700 ease-in-out group-hover:scale-110"
@@ -88,7 +70,7 @@ export default function CardSection() {
             </svg>
           </Link>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
