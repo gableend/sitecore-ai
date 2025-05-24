@@ -247,7 +247,7 @@ export default function AIChat({ className = '' }: AIChatProps) {
         </div>
 
         {/* Chat Messages */}
-        <div className="space-y-6 mb-6 max-h-96 overflow-y-auto">
+        <div className="space-y-6 mb-6 max-h-[600px] overflow-y-auto">
           {messages.map((message) => (
             <div key={message.id} className="group">
               {message.role === 'user' ? (
