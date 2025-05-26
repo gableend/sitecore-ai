@@ -258,6 +258,16 @@ export default function AgenticExperience() {
     }
   }, [searchParams]);
 
+  // Scroll to top when a topic is selected
+  useEffect(() => {
+    if (selectedTopic) {
+      // Use requestAnimationFrame to ensure DOM has updated
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+  }, [selectedTopic]);
+
   const handleTopicSelect = (topicId: string) => {
     setSelectedTopic(topicId);
     setSearchParams({ topic: topicId });
@@ -265,10 +275,6 @@ export default function AgenticExperience() {
     if (topic) {
       setCurrentContent(topic.content.text);
       setContentMode('text');
-      // Scroll to top of the page when topic is selected
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 100);
     }
   };
 
@@ -537,6 +543,16 @@ export default function AgenticExperience() {
               <div className="flex justify-center">
                 <div className="bg-gray-100 p-1 rounded-lg inline-flex">
                   <button
+                    onClick={() => handleContentModeChange('text')}
+                    className={`px-6 py-2 rounded-md font-medium transition-all ${
+                      contentMode === 'text'
+                        ? 'bg-white shadow-sm text-gray-900'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    📖 Article
+                  </button>
+                  <button
                     onClick={() => handleContentModeChange('video')}
                     className={`px-6 py-2 rounded-md font-medium transition-all ${
                       contentMode === 'video'
@@ -555,16 +571,6 @@ export default function AgenticExperience() {
                     }`}
                   >
                     🎧 Podcast
-                  </button>
-                  <button
-                    onClick={() => handleContentModeChange('text')}
-                    className={`px-6 py-2 rounded-md font-medium transition-all ${
-                      contentMode === 'text'
-                        ? 'bg-white shadow-sm text-gray-900'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    📖 Article
                   </button>
                 </div>
               </div>
