@@ -680,7 +680,7 @@ export default function AgenticExperience() {
               <div className="flex justify-center mb-8">
                 <button
                   onClick={() => setShowAIPanel(true)}
-                  className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-3 transform hover:scale-105"
+                  className="sitecore-gradient text-white px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-3 transform hover:scale-105"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -732,7 +732,7 @@ export default function AgenticExperience() {
               <button
                 onClick={handleAIAdjustment}
                 disabled={!aiPrompt.trim() || isProcessing}
-                className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-lg hover:from-purple-600 hover:to-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 sitecore-gradient text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isProcessing ? 'Processing...' : 'Apply'}
               </button>

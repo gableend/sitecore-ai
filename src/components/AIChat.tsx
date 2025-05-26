@@ -75,7 +75,7 @@ function CaseStudyCard({ caseStudy }: { caseStudy: Message['caseStudy'] }) {
             <div className="mt-4 pt-3 border-t border-purple-200">
               <Link
                 to={caseStudy.url}
-                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white text-sm font-medium rounded-lg transition-all duration-200 hover:shadow-md transform hover:scale-105"
+                className="inline-flex items-center px-4 py-2 sitecore-gradient text-white text-sm font-medium rounded-lg transition-all duration-200 hover:shadow-md transform hover:scale-105"
               >
                 <span>Learn more</span>
                 <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -733,7 +733,7 @@ export default function AIChat({ className = '', onReady }: AIChatProps) {
                 <button
                   key={topic.id}
                   onClick={() => handleHotTopicClick(topic)}
-                  className="group relative overflow-hidden bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 text-white px-4 py-3 rounded-full text-sm font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 transform"
+                  className="group relative overflow-hidden sitecore-gradient text-white px-4 py-3 rounded-full text-sm font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 transform"
                   style={{
                     animationDelay: `${index * 100}ms`,
                     animation: 'slideInUp 0.5s ease-out forwards'

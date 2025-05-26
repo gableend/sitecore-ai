@@ -95,7 +95,7 @@ body {
 
 /* Sitecore Power Gradient */
 .sitecore-gradient {
-  background: linear-gradient(135deg, var(--sitecore-red) 0%, var(--sitecore-purple) 100%);
+  background: linear-gradient(135deg, var(--sitecore-deep-red) 0%, var(--sitecore-ultra-violet) 100%);
   background-size: 200% auto;
   transition: all 0.3s ease;
 }
@@ -107,7 +107,7 @@ body {
 }
 
 .sitecore-gradient-text {
-  background: linear-gradient(90deg, var(--sitecore-red) 0%, var(--sitecore-purple) 50%, var(--sitecore-red) 100%);
+  background: linear-gradient(90deg, var(--sitecore-deep-red) 0%, var(--sitecore-ultra-violet) 50%, var(--sitecore-deep-red) 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -118,7 +118,7 @@ body {
 
 /* Ask Stream Button Animation */
 .ask-stream-button {
-  background: linear-gradient(90deg, var(--sitecore-red) 0%, var(--sitecore-purple) 100%);
+  background: linear-gradient(90deg, var(--sitecore-deep-red) 0%, var(--sitecore-ultra-violet) 100%);
   background-size: 200% auto;
   position: relative;
   overflow: hidden;
@@ -209,7 +209,7 @@ body {
 }
 
 .stream-pulse-circle {
-  background: linear-gradient(135deg, var(--sitecore-red), var(--sitecore-purple));
+  background: linear-gradient(135deg, var(--sitecore-deep-red), var(--sitecore-ultra-violet));
   border-radius: 50%;
   padding: 8px;
   animation: stream-pulse 3s infinite ease-in-out, stream-gradient-shift 6s infinite alternate;
@@ -234,7 +234,7 @@ body {
 }
 
 .stream-avatar-pulse {
-  background: linear-gradient(135deg, var(--sitecore-red), var(--sitecore-purple));
+  background: linear-gradient(135deg, var(--sitecore-deep-red), var(--sitecore-ultra-violet));
   border-radius: 50%;
   padding: 4px;
   animation: stream-pulse 3s infinite ease-in-out, stream-gradient-shift 6s infinite alternate;
@@ -268,10 +268,10 @@ body {
 
 @keyframes stream-gradient-shift {
   0% {
-    background: linear-gradient(135deg, var(--sitecore-red), var(--sitecore-purple));
+    background: linear-gradient(135deg, var(--sitecore-deep-red), var(--sitecore-ultra-violet));
   }
   100% {
-    background: linear-gradient(225deg, var(--sitecore-purple), var(--sitecore-red));
+    background: linear-gradient(225deg, var(--sitecore-ultra-violet), var(--sitecore-deep-red));
   }
 }
 
