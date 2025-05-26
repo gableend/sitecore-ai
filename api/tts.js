@@ -49,6 +49,13 @@ exports.handler = async (event, context) => {
       };
     }
 
+    // Truncate text if too long (OpenAI TTS has a 4096 character limit)
+    const truncatedText = text.length > 4000 ? text.substring(0, 4000) + '...' : text;
+
+    console.log('TTS Request - Text length:', truncatedText.length);
+    console.log('TTS Request - Voice:', voice);
+    console.log('TTS Request - Model:', model);
+
     const response = await fetch('https://api.openai.com/v1/audio/speech', {
       method: 'POST',
       headers: {
@@ -57,7 +64,7 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         model: model,
-        input: text,
+        input: truncatedText,
         voice: voice,
         response_format: 'mp3'
       }),
@@ -65,14 +72,18 @@ exports.handler = async (event, context) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI TTS API error:', response.status, errorText);
+      console.error('OpenAI TTS API error:', response.status, response.statusText, errorText);
       return {
         statusCode: 500,
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ error: 'TTS API request failed' }),
+        body: JSON.stringify({
+          error: 'TTS API request failed',
+          status: response.status,
+          details: errorText
+        }),
       };
     }
 

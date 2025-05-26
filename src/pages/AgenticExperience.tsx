@@ -308,8 +308,10 @@ export default function AgenticExperience() {
   const generatePodcast = async (textContent: string) => {
     setIsGeneratingPodcast(true);
     try {
-      // Convert article content to podcast script format
-      const podcastScript = convertToPodcastScript(textContent);
+      // Convert article content to podcast script format - use shorter version for testing
+      const podcastScript = "Welcome to this test podcast. This is a simple test to see if our text-to-speech system is working correctly. Thank you for listening.";
+
+      console.log('Generating podcast with script length:', podcastScript.length);
 
       const response = await fetch('/api/tts', {
         method: 'POST',
@@ -327,11 +329,15 @@ export default function AgenticExperience() {
         const audioBlob = await response.blob();
         const audioUrl = URL.createObjectURL(audioBlob);
         setPodcastAudioUrl(audioUrl);
+        console.log('Podcast generated successfully');
       } else {
-        console.error('Failed to generate podcast');
+        const errorData = await response.json();
+        console.error('Failed to generate podcast:', response.status, errorData);
+        alert(`Failed to generate podcast: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error generating podcast:', error);
+      alert('Error generating podcast. Please try again.');
     } finally {
       setIsGeneratingPodcast(false);
     }
