@@ -304,41 +304,49 @@ export default function AgenticExperience() {
   const generatePodcast = async (textContent: string) => {
     setIsGeneratingPodcast(true);
     try {
-      const podcastScript = convertToPodcastScript(textContent);
+      // Convert article content to podcast script format and split into chunks
+      const podcastChunks = convertToPodcastChunks(textContent);
 
-      console.log('Generating podcast with script length:', podcastScript.length);
+      console.log('Generating podcast with', podcastChunks.length, 'chunks');
 
-      const response = await fetch('/api/tts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text: podcastScript,
-          voice: 'alloy',
-          model: 'tts-1'
-        }),
-      });
+      // Generate audio for each chunk
+      const audioBuffers: ArrayBuffer[] = [];
 
-      if (response.ok) {
-        const audioBlob = await response.blob();
-        const audioUrl = URL.createObjectURL(audioBlob);
-        setPodcastAudioUrl(audioUrl);
-        console.log('Podcast generated successfully');
-      } else {
-        const errorData = await response.json();
-        console.error('Failed to generate podcast:', response.status, errorData);
+      for (let i = 0; i < podcastChunks.length; i++) {
+        console.log(`Processing chunk ${i + 1}/${podcastChunks.length}`);
 
-        // More user-friendly error messages
-        let errorMessage = 'Failed to generate podcast';
-        if (response.status === 408 || errorData.error?.includes('timeout')) {
-          errorMessage = 'Podcast generation timed out. Please try again.';
-        } else if (response.status === 502) {
-          errorMessage = 'Service temporarily unavailable. Please try again in a moment.';
+        const response = await fetch('/api/tts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: podcastChunks[i],
+            voice: 'alloy',
+            model: 'tts-1'
+          }),
+        });
+
+        if (response.ok) {
+          const arrayBuffer = await response.arrayBuffer();
+          audioBuffers.push(arrayBuffer);
+
+          // Add a small delay between requests to avoid rate limiting
+          if (i < podcastChunks.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+        } else {
+          const errorData = await response.json();
+          console.error('Failed to generate podcast chunk:', response.status, errorData);
+          throw new Error(`Failed to generate audio chunk ${i + 1}`);
         }
-
-        alert(errorMessage);
       }
+
+      // Combine all audio buffers into a single blob
+      const combinedBlob = new Blob(audioBuffers.map(buffer => new Uint8Array(buffer)), { type: 'audio/mpeg' });
+      const audioUrl = URL.createObjectURL(combinedBlob);
+      setPodcastAudioUrl(audioUrl);
+      console.log('Podcast generated successfully with', audioBuffers.length, 'chunks');
     } catch (error) {
       console.error('Error generating podcast:', error);
       alert('Error generating podcast. Please try again.');
@@ -347,7 +355,7 @@ export default function AgenticExperience() {
     }
   };
 
-  const convertToPodcastScript = (content: string) => {
+  const convertToPodcastChunks = (content: string) => {
     // Clean up markdown formatting first
     let cleanContent = content
       .replace(/#{1,6}\s/g, '') // Remove heading markers
@@ -355,32 +363,56 @@ export default function AgenticExperience() {
       .replace(/\n- /g, '\n') // Convert bullet points to regular text
       .replace(/^- /g, ''); // Remove leading bullet points
 
-    // Split into paragraphs and extract key sections
+    // Split into paragraphs and extract all sections
     const paragraphs = cleanContent.split('\n\n').filter(p => p.trim());
 
-    // Get the title (first paragraph) and key content
+    if (paragraphs.length === 0) return ["Welcome to this podcast. Thank you for listening."];
+
+    const chunks: string[] = [];
     const title = paragraphs[0] || 'this topic';
+
+    // Introduction chunk
     const introduction = paragraphs[1] || '';
+    chunks.push(`Welcome to this exploration of ${title}. ${introduction}`);
 
-    // Keep it shorter for faster processing
-    const introSentences = introduction.split('.').slice(0, 2).join('.') + '.';
+    // Process remaining paragraphs in chunks
+    for (let i = 2; i < paragraphs.length; i++) {
+      let paragraph = paragraphs[i];
 
-    // Create a shorter, more focused podcast script
-    let script = `Welcome to this brief exploration of ${title}.
+      // If paragraph is too long, split it by sentences
+      if (paragraph.length > 1200) {
+        const sentences = paragraph.split('. ');
+        let currentChunk = '';
 
-${introSentences}
+        for (const sentence of sentences) {
+          if ((currentChunk + sentence).length > 1200 && currentChunk) {
+            chunks.push(currentChunk.trim() + '.');
+            currentChunk = sentence;
+          } else {
+            currentChunk += (currentChunk ? '. ' : '') + sentence;
+          }
+        }
 
-This provides a solid foundation for understanding this important topic. Thank you for listening.`;
-
-    // Ensure we stay well under the limit for faster processing
-    if (script.length > 1500) {
-      // Truncate at a sentence boundary if possible
-      const truncated = script.substring(0, 1500);
-      const lastPeriod = truncated.lastIndexOf('.');
-      script = lastPeriod > 500 ? truncated.substring(0, lastPeriod + 1) : truncated + '.';
+        if (currentChunk) {
+          chunks.push(currentChunk + (currentChunk.endsWith('.') ? '' : '.'));
+        }
+      } else {
+        chunks.push(paragraph);
+      }
     }
 
-    return script;
+    // Add conclusion to the last chunk or as separate chunk
+    const conclusion = " Thank you for listening to this comprehensive overview.";
+    if (chunks.length > 0) {
+      const lastChunk = chunks[chunks.length - 1];
+      if (lastChunk.length + conclusion.length <= 1400) {
+        chunks[chunks.length - 1] = lastChunk + conclusion;
+      } else {
+        chunks.push("That concludes our exploration of this topic." + conclusion);
+      }
+    }
+
+    return chunks;
   };
 
   const handleAIAdjustment = async () => {
