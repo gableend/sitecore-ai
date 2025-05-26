@@ -245,6 +245,8 @@ export default function AgenticExperience() {
   const [aiPrompt, setAiPrompt] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentContent, setCurrentContent] = useState('');
+  const [isGeneratingPodcast, setIsGeneratingPodcast] = useState(false);
+  const [podcastAudioUrl, setPodcastAudioUrl] = useState<string | null>(null);
 
   // Check for topic parameter in URL
   useEffect(() => {
@@ -278,13 +280,18 @@ export default function AgenticExperience() {
     }
   };
 
-  const handleContentModeChange = (mode: 'video' | 'podcast' | 'text') => {
+  const handleContentModeChange = async (mode: 'video' | 'podcast' | 'text') => {
     setContentMode(mode);
     if (selectedTopic) {
       const topic = hotTopics.find(t => t.id === selectedTopic);
       if (topic) {
         // Always load the appropriate content for the selected mode
         setCurrentContent(topic.content[mode]);
+
+        // Generate podcast when switching to podcast mode
+        if (mode === 'podcast' && !podcastAudioUrl) {
+          await generatePodcast(topic.content.text);
+        }
       }
     }
   };
@@ -296,6 +303,58 @@ export default function AgenticExperience() {
         setCurrentContent(topic.content[contentMode]);
       }
     }
+  };
+
+  const generatePodcast = async (textContent: string) => {
+    setIsGeneratingPodcast(true);
+    try {
+      // Convert article content to podcast script format
+      const podcastScript = convertToPodcastScript(textContent);
+
+      const response = await fetch('/api/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: podcastScript,
+          voice: 'alloy', // OpenAI TTS voice
+          model: 'tts-1'
+        }),
+      });
+
+      if (response.ok) {
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        setPodcastAudioUrl(audioUrl);
+      } else {
+        console.error('Failed to generate podcast');
+      }
+    } catch (error) {
+      console.error('Error generating podcast:', error);
+    } finally {
+      setIsGeneratingPodcast(false);
+    }
+  };
+
+  const convertToPodcastScript = (content: string) => {
+    // Convert article content to a more conversational podcast format
+    let script = content
+      // Remove markdown formatting
+      .replace(/#{1,6}\s/g, '')
+      .replace(/\*\*(.+?)\*\*/g, '$1')
+      // Add podcast introduction
+      .replace(/^(.+)/, 'Welcome to this deep dive into $1. Let\'s explore this fascinating topic together.\n\n$1')
+      // Make it more conversational
+      .replace(/\n\n/g, '\n\nNow, ')
+      .replace(/\. /g, '. Let me explain this further. ')
+      // Add natural pauses and transitions
+      .replace(/- /g, 'First, ')
+      .replace(/\n- /g, '\nNext, ')
+      // Add conclusion
+      + '\n\nThat wraps up our exploration of this topic. Thank you for listening, and I hope this has given you valuable insights to consider.';
+
+    return script;
   };
 
   const handleAIAdjustment = async () => {
@@ -604,26 +663,79 @@ export default function AgenticExperience() {
               )}
 
               {contentMode === 'podcast' && (
-                <div className="bg-gray-50 rounded-lg p-8 text-center">
-                  <div className="max-w-md mx-auto">
-                    <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 3a9 9 0 0 0-9 9v7c0 1.1.9 2 2 2h4v-8H5v-1a7 7 0 0 1 14 0v1h-4v8h4c1.1 0 2-.9 2-2v-7a9 9 0 0 0-9-9z"/>
-                    </svg>
-                    <h3 className="text-lg font-semibold mb-2">Podcast Episode</h3>
-                    <p className="text-gray-600 mb-4">Audio content coming soon</p>
-                    <div className="bg-white rounded-lg p-4 border">
-                      <div className="flex items-center justify-center space-x-4">
-                        <button className="p-2 bg-gray-200 rounded-full">
-                          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z"/>
-                          </svg>
-                        </button>
-                        <div className="flex-1 bg-gray-200 h-2 rounded-full">
-                          <div className="bg-purple-500 h-2 rounded-full w-1/3" />
-                        </div>
-                        <span className="text-sm text-gray-500">12:34</span>
-                      </div>
+                <div className="bg-gray-50 rounded-lg p-8">
+                  <div className="max-w-2xl mx-auto">
+                    <div className="text-center mb-6">
+                      <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 3a9 9 0 0 0-9 9v7c0 1.1.9 2 2 2h4v-8H5v-1a7 7 0 0 1 14 0v1h-4v8h4c1.1 0 2-.9 2-2v-7a9 9 0 0 0-9-9z"/>
+                      </svg>
+                      <h3 className="text-lg font-semibold mb-2">AI-Generated Podcast</h3>
+                      <p className="text-gray-600 mb-4">
+                        {isGeneratingPodcast
+                          ? 'Generating audio from article content...'
+                          : podcastAudioUrl
+                            ? 'Article converted to podcast using OpenAI TTS'
+                            : 'Click to generate podcast from article content'
+                        }
+                      </p>
                     </div>
+
+                    {isGeneratingPodcast && (
+                      <div className="bg-white rounded-lg p-6 border text-center">
+                        <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                        <p className="text-gray-600">Converting article to audio...</p>
+                        <p className="text-sm text-gray-500 mt-2">This may take a moment</p>
+                      </div>
+                    )}
+
+                    {podcastAudioUrl && !isGeneratingPodcast && (
+                      <div className="bg-white rounded-lg p-6 border">
+                        <audio controls className="w-full mb-4">
+                          <source src={podcastAudioUrl} type="audio/mpeg" />
+                          Your browser does not support the audio element.
+                        </audio>
+                        <div className="text-center">
+                          <p className="text-sm text-gray-600">
+                            🎙️ AI-narrated version of "{selectedTopicData?.title}"
+                          </p>
+                          <button
+                            onClick={() => {
+                              setPodcastAudioUrl(null);
+                              if (selectedTopic) {
+                                const topic = hotTopics.find(t => t.id === selectedTopic);
+                                if (topic) {
+                                  generatePodcast(topic.content.text);
+                                }
+                              }
+                            }}
+                            className="mt-2 text-sm text-purple-600 hover:text-purple-700"
+                          >
+                            Regenerate Audio
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {!podcastAudioUrl && !isGeneratingPodcast && (
+                      <div className="bg-white rounded-lg p-6 border text-center">
+                        <button
+                          onClick={() => {
+                            if (selectedTopic) {
+                              const topic = hotTopics.find(t => t.id === selectedTopic);
+                              if (topic) {
+                                generatePodcast(topic.content.text);
+                              }
+                            }
+                          }}
+                          className="sitecore-gradient text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-all"
+                        >
+                          🎙️ Generate Podcast
+                        </button>
+                        <p className="text-sm text-gray-500 mt-2">
+                          Uses OpenAI TTS to convert the article into audio
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -706,8 +818,8 @@ export default function AgenticExperience() {
         )}
       </div>
 
-      {/* Floating AI Adjustment Button */}
-      {selectedTopic && (
+      {/* Floating AI Adjustment Button - Only on Article View */}
+      {selectedTopic && contentMode === 'text' && (
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40">
           <button
             onClick={() => setShowAIPanel(true)}
