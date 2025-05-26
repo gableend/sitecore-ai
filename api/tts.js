@@ -49,10 +49,22 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Truncate text if too long (OpenAI TTS has a 4096 character limit)
-    const truncatedText = text.length > 4000 ? text.substring(0, 4000) + '...' : text;
+    // Validate text length (OpenAI TTS has a 4096 character limit)
+    if (text.length > 4096) {
+      return {
+        statusCode: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          error: 'Text too long',
+          details: `Text length ${text.length} exceeds 4096 character limit. Please split into smaller chunks.`
+        }),
+      };
+    }
 
-    console.log('TTS Request - Text length:', truncatedText.length);
+    console.log('TTS Request - Text length:', text.length);
     console.log('TTS Request - Voice:', voice);
     console.log('TTS Request - Model:', model);
 
@@ -68,7 +80,7 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         model: model,
-        input: truncatedText,
+        input: text,
         voice: voice,
         response_format: 'mp3'
       }),

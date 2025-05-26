@@ -26,10 +26,18 @@
 - [x] Add OpenAI integration for content manipulation
 - [x] Update AI chat links to properly connect to Agentic Experience page with topic parameters
 
+## Completed ✅
+- [x] Fix podcast chunking algorithm to properly handle long content
+- [x] Update TTS API to validate chunk sizes instead of truncating
+- [x] Improve content processing to include all article sections
+- [x] Add debugging logs for chunk generation
+- [x] Create version 4 with improved podcast generation
+
 ## In Progress 🔄
 
 ## Next Tasks 📋
-- [ ] Set up OpenAI API key environment variable
+- [ ] Set up OpenAI API key environment variable for TTS functionality
+- [ ] Test improved podcast generation with chunking
 - [ ] Fix TypeScript `any` types and accessibility issues
 - [ ] Test multimodal content switching
 - [ ] Test OpenAI content adjustment features

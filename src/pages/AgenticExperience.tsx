@@ -247,6 +247,11 @@ export default function AgenticExperience() {
   const [currentContent, setCurrentContent] = useState('');
   const [isGeneratingPodcast, setIsGeneratingPodcast] = useState(false);
   const [podcastAudioUrl, setPodcastAudioUrl] = useState<string | null>(null);
+  const [podcastChunks, setPodcastChunks] = useState<string[]>([]);
+  const [loadedChunks, setLoadedChunks] = useState<number>(0);
+  const [totalChunks, setTotalChunks] = useState<number>(0);
+  const [currentChunkIndex, setCurrentChunkIndex] = useState<number>(0);
+  const [audioQueue, setAudioQueue] = useState<string[]>([]);
 
   // Check for topic parameter in URL
   useEffect(() => {
@@ -267,6 +272,29 @@ export default function AgenticExperience() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     }
+  }, [selectedTopic]);
+
+  // When podcastAudioUrl changes (for progressive streaming), reset audio element to play new chunk
+  useEffect(() => {
+    if (contentMode === 'podcast' && podcastAudioUrl) {
+      const audioElem = document.getElementById('progressive-podcast-audio') as HTMLAudioElement | null;
+      if (audioElem) {
+        audioElem.load();
+        audioElem.play().catch(() => {});
+      }
+    }
+    // eslint-disable-next-line
+  }, [podcastAudioUrl]);
+
+  // When podcast is regenerated or topic changes, reset podcast state
+  useEffect(() => {
+    setPodcastAudioUrl(null);
+    setPodcastChunks([]);
+    setLoadedChunks(0);
+    setTotalChunks(0);
+    setCurrentChunkIndex(0);
+    setAudioQueue([]);
+    // eslint-disable-next-line
   }, [selectedTopic]);
 
   const handleTopicSelect = (topicId: string) => {
@@ -301,57 +329,94 @@ export default function AgenticExperience() {
     }
   };
 
+  // --- Progressive Streaming Podcast Implementation ---
   const generatePodcast = async (textContent: string) => {
     setIsGeneratingPodcast(true);
+    setLoadedChunks(0);
+    setCurrentChunkIndex(0);
+    setAudioQueue([]);
+    setPodcastAudioUrl(null);
+
     try {
       // Convert article content to podcast script format and split into chunks
-      const podcastChunks = convertToPodcastChunks(textContent);
+      const chunks = convertToPodcastChunks(textContent);
+      setPodcastChunks(chunks);
+      setTotalChunks(chunks.length);
 
-      console.log('Generating podcast with', podcastChunks.length, 'chunks');
+      console.log('Generating podcast with', chunks.length, 'chunks');
 
-      // Generate audio for each chunk
-      const audioBuffers: ArrayBuffer[] = [];
+      // Generate first chunk immediately to start playback
+      await generateChunk(chunks[0], 0, chunks.length);
 
-      for (let i = 0; i < podcastChunks.length; i++) {
-        console.log(`Processing chunk ${i + 1}/${podcastChunks.length}`);
+      // Generate remaining chunks in background
+      generateRemainingChunks(chunks);
 
-        const response = await fetch('/api/tts', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            text: podcastChunks[i],
-            voice: 'alloy',
-            model: 'tts-1'
-          }),
-        });
-
-        if (response.ok) {
-          const arrayBuffer = await response.arrayBuffer();
-          audioBuffers.push(arrayBuffer);
-
-          // Add a small delay between requests to avoid rate limiting
-          if (i < podcastChunks.length - 1) {
-            await new Promise(resolve => setTimeout(resolve, 500));
-          }
-        } else {
-          const errorData = await response.json();
-          console.error('Failed to generate podcast chunk:', response.status, errorData);
-          throw new Error(`Failed to generate audio chunk ${i + 1}`);
-        }
-      }
-
-      // Combine all audio buffers into a single blob
-      const combinedBlob = new Blob(audioBuffers.map(buffer => new Uint8Array(buffer)), { type: 'audio/mpeg' });
-      const audioUrl = URL.createObjectURL(combinedBlob);
-      setPodcastAudioUrl(audioUrl);
-      console.log('Podcast generated successfully with', audioBuffers.length, 'chunks');
     } catch (error) {
       console.error('Error generating podcast:', error);
       alert('Error generating podcast. Please try again.');
-    } finally {
       setIsGeneratingPodcast(false);
+    }
+  };
+
+  const generateChunk = async (chunkText: string, index: number, total: number) => {
+    console.log(`Processing chunk ${index + 1}/${total}`);
+
+    const response = await fetch('/api/tts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text: chunkText,
+        voice: 'alloy',
+        model: 'tts-1'
+      }),
+    });
+
+    if (response.ok) {
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBlob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
+      const audioUrl = URL.createObjectURL(audioBlob);
+
+      if (index === 0) {
+        // Start playing the first chunk immediately
+        setPodcastAudioUrl(audioUrl);
+        setIsGeneratingPodcast(false);
+      } else {
+        // Add subsequent chunks to the queue
+        setAudioQueue(prev => [...prev, audioUrl]);
+      }
+
+      setLoadedChunks(prev => prev + 1);
+      return audioUrl;
+    } else {
+      const errorData = await response.json();
+      console.error('Failed to generate podcast chunk:', response.status, errorData);
+      throw new Error(`Failed to generate audio chunk ${index + 1}`);
+    }
+  };
+
+  const generateRemainingChunks = async (chunks: string[]) => {
+    try {
+      for (let i = 1; i < chunks.length; i++) {
+        await generateChunk(chunks[i], i, chunks.length);
+
+        // Add a small delay between requests to avoid rate limiting
+        if (i < chunks.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+      }
+      console.log('All podcast chunks generated successfully');
+    } catch (error) {
+      console.error('Error generating remaining chunks:', error);
+    }
+  };
+
+  const playNextChunk = () => {
+    if (currentChunkIndex < audioQueue.length) {
+      const nextUrl = audioQueue[currentChunkIndex];
+      setPodcastAudioUrl(nextUrl);
+      setCurrentChunkIndex(prev => prev + 1);
     }
   };
 
@@ -370,47 +435,89 @@ export default function AgenticExperience() {
 
     const chunks: string[] = [];
     const title = paragraphs[0] || 'this topic';
+    const maxChunkSize = 3500; // Keep well under 4000 character API limit
 
     // Introduction chunk
     const introduction = paragraphs[1] || '';
-    chunks.push(`Welcome to this exploration of ${title}. ${introduction}`);
+    const introText = `Welcome to this exploration of ${title}. ${introduction}`;
 
-    // Process remaining paragraphs in chunks
+    if (introText.length > maxChunkSize) {
+      // Split intro if too long
+      const sentences = introText.split('. ');
+      let currentChunk = '';
+
+      for (const sentence of sentences) {
+        if ((currentChunk + sentence + '. ').length > maxChunkSize && currentChunk) {
+          chunks.push(currentChunk.trim() + '.');
+          currentChunk = sentence;
+        } else {
+          currentChunk += (currentChunk ? '. ' : '') + sentence;
+        }
+      }
+
+      if (currentChunk) {
+        chunks.push(currentChunk + (currentChunk.endsWith('.') ? '' : '.'));
+      }
+    } else {
+      chunks.push(introText);
+    }
+
+    // Process remaining paragraphs, combining them into chunks
+    let currentChunk = '';
+
     for (let i = 2; i < paragraphs.length; i++) {
-      let paragraph = paragraphs[i];
+      const paragraph = paragraphs[i];
 
-      // If paragraph is too long, split it by sentences
-      if (paragraph.length > 1200) {
-        const sentences = paragraph.split('. ');
-        let currentChunk = '';
+      // Check if adding this paragraph would exceed the limit
+      if ((currentChunk + '\n\n' + paragraph).length > maxChunkSize && currentChunk) {
+        // Save current chunk and start a new one
+        chunks.push(currentChunk.trim());
+        currentChunk = paragraph;
+      } else {
+        // Add paragraph to current chunk
+        currentChunk += (currentChunk ? '\n\n' : '') + paragraph;
+      }
+
+      // If even a single paragraph is too long, split it by sentences
+      if (currentChunk.length > maxChunkSize) {
+        const sentences = currentChunk.split('. ');
+        let tempChunk = '';
+        currentChunk = '';
 
         for (const sentence of sentences) {
-          if ((currentChunk + sentence).length > 1200 && currentChunk) {
-            chunks.push(currentChunk.trim() + '.');
-            currentChunk = sentence;
+          if ((tempChunk + sentence + '. ').length > maxChunkSize && tempChunk) {
+            chunks.push(tempChunk.trim() + '.');
+            tempChunk = sentence;
           } else {
-            currentChunk += (currentChunk ? '. ' : '') + sentence;
+            tempChunk += (tempChunk ? '. ' : '') + sentence;
           }
         }
 
-        if (currentChunk) {
-          chunks.push(currentChunk + (currentChunk.endsWith('.') ? '' : '.'));
-        }
-      } else {
-        chunks.push(paragraph);
+        currentChunk = tempChunk + (tempChunk.endsWith('.') ? '' : '.');
       }
+    }
+
+    // Add any remaining content
+    if (currentChunk.trim()) {
+      chunks.push(currentChunk.trim());
     }
 
     // Add conclusion to the last chunk or as separate chunk
     const conclusion = " Thank you for listening to this comprehensive overview.";
     if (chunks.length > 0) {
       const lastChunk = chunks[chunks.length - 1];
-      if (lastChunk.length + conclusion.length <= 1400) {
+      if (lastChunk.length + conclusion.length <= maxChunkSize) {
         chunks[chunks.length - 1] = lastChunk + conclusion;
       } else {
         chunks.push("That concludes our exploration of this topic." + conclusion);
       }
     }
+
+    // Log chunk information for debugging
+    console.log('Generated chunks:', chunks.length);
+    chunks.forEach((chunk, index) => {
+      console.log(`Chunk ${index + 1} length: ${chunk.length} characters`);
+    });
 
     return chunks;
   };
@@ -717,7 +824,9 @@ export default function AgenticExperience() {
                       <h3 className="text-lg font-semibold mb-2">AI-Generated Podcast</h3>
                       <p className="text-gray-600 mb-4">
                         {isGeneratingPodcast
-                          ? 'Generating audio from article content...'
+                          ? loadedChunks === 0
+                            ? 'Generating audio from article content...'
+                            : `Streaming audio... (${loadedChunks}/${totalChunks} chunks ready)`
                           : podcastAudioUrl
                             ? 'Article converted to podcast using OpenAI TTS'
                             : 'Click to generate podcast from article content'
@@ -728,14 +837,23 @@ export default function AgenticExperience() {
                     {isGeneratingPodcast && (
                       <div className="bg-white rounded-lg p-6 border text-center">
                         <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-                        <p className="text-gray-600">Converting article to audio...</p>
+                        <p className="text-gray-600">
+                          {loadedChunks === 0
+                            ? 'Converting article to audio...'
+                            : `Streaming audio... (${loadedChunks}/${totalChunks} chunks ready)`}
+                        </p>
                         <p className="text-sm text-gray-500 mt-2">This may take a moment</p>
                       </div>
                     )}
 
                     {podcastAudioUrl && !isGeneratingPodcast && (
                       <div className="bg-white rounded-lg p-6 border">
-                        <audio controls className="w-full mb-4">
+                        <audio
+                          id="progressive-podcast-audio"
+                          controls
+                          className="w-full mb-4"
+                          onEnded={playNextChunk}
+                        >
                           <source src={podcastAudioUrl} type="audio/mpeg" />
                           Your browser does not support the audio element.
                         </audio>
@@ -746,6 +864,11 @@ export default function AgenticExperience() {
                           <button
                             onClick={() => {
                               setPodcastAudioUrl(null);
+                              setPodcastChunks([]);
+                              setLoadedChunks(0);
+                              setTotalChunks(0);
+                              setCurrentChunkIndex(0);
+                              setAudioQueue([]);
                               if (selectedTopic) {
                                 const topic = hotTopics.find(t => t.id === selectedTopic);
                                 if (topic) {
@@ -758,6 +881,18 @@ export default function AgenticExperience() {
                             Regenerate Audio
                           </button>
                         </div>
+                        {audioQueue.length > 0 && (
+                          <div className="mt-4 text-xs text-gray-500">
+                            <p>
+                              {`Ready chunks: ${loadedChunks}/${totalChunks}. `}
+                              {currentChunkIndex < audioQueue.length
+                                ? 'Next chunk will play automatically.'
+                                : loadedChunks < totalChunks
+                                  ? 'Waiting for more audio...'
+                                  : 'All chunks played.'}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     )}
 
