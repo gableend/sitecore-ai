@@ -1,0 +1,322 @@
+@import "@fontsource/dm-sans/400.css";
+@import "@fontsource/dm-sans/500.css";
+@import "@fontsource/dm-sans/600.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Sitecore brand colors */
+  --sitecore-red: #FF2A1D;        /* Sitecore Red */
+  --sitecore-purple: #6A1B9A;     /* Ultraviolet/Purple */
+  --sitecore-black: #000000;
+  --sitecore-white: #FFFFFF;
+  --sitecore-gray-light: #F5F5F5;
+  --sitecore-gray-medium: #E0E0E0;
+  --sitecore-gray-dark: #757575;
+
+  /* Base variables */
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 240 5.9% 10%;
+  --radius: 0.5rem;
+  --chart-1: 12 76% 61%;
+  --chart-2: 173 58% 39%;
+  --chart-3: 197 37% 24%;
+  --chart-4: 43 74% 66%;
+  --chart-5: 27 87% 67%;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 240 4.9% 83.9%;
+  --chart-1: 220 70% 50%;
+  --chart-2: 160 60% 45%;
+  --chart-3: 30 80% 55%;
+  --chart-4: 280 65% 60%;
+  --chart-5: 340 75% 55%;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: var(--sitecore-black);
+  background-color: var(--sitecore-white);
+}
+
+/* Sitecore Power Gradient */
+.sitecore-gradient {
+  background: linear-gradient(135deg, var(--sitecore-red) 0%, var(--sitecore-purple) 100%);
+  background-size: 200% auto;
+  transition: all 0.3s ease;
+}
+
+.sitecore-gradient:hover:not(:disabled) {
+  background-position: right center;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(255, 42, 19, 0.4);
+}
+
+.sitecore-gradient-text {
+  background: linear-gradient(90deg, var(--sitecore-red) 0%, var(--sitecore-purple) 50%, var(--sitecore-red) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  animation: sitecore-gradient-move 3s ease-in-out infinite;
+}
+
+/* Ask Stream Button Animation */
+.ask-stream-button {
+  background: linear-gradient(90deg, var(--sitecore-red) 0%, var(--sitecore-purple) 100%);
+  background-size: 200% auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.ask-stream-button:hover:not(:disabled) {
+  background-position: right center;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 42, 19, 0.4);
+}
+
+.ask-stream-button:not(:disabled)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.ask-stream-button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+/* Custom animations */
+@keyframes sitecore-gradient-move {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+
+
+/* Stream AI Logo Animations */
+.stream-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stream-pulse-circle {
+  background: linear-gradient(135deg, #ff004f, #6800ff);
+  border-radius: 50%;
+  padding: 8px;
+  animation: stream-pulse 3s infinite ease-in-out, stream-gradient-shift 6s infinite alternate;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stream-logo-image {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+/* Stream Avatar Styles */
+.stream-avatar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stream-avatar-pulse {
+  background: linear-gradient(135deg, #ff004f, #6800ff);
+  border-radius: 50%;
+  padding: 4px;
+  animation: stream-pulse 3s infinite ease-in-out, stream-gradient-shift 6s infinite alternate;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stream-avatar-image {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.stream-thinking {
+  animation: stream-pulse 1s infinite ease-in-out, stream-gradient-shift 2s infinite alternate, stream-thinking-pulse 1.5s infinite ease-in-out;
+}
+
+/* Stream Animation Keyframes */
+@keyframes stream-pulse {
+  0%, 100% {
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes stream-gradient-shift {
+  0% {
+    background: linear-gradient(135deg, #ff004f, #6800ff);
+  }
+  100% {
+    background: linear-gradient(225deg, #6800ff, #ff004f);
+  }
+}
+
+@keyframes stream-thinking-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 79, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 0, 79, 0);
+  }
+}
+
+/* Logo carousel now uses JavaScript animation for precise control */
+
+/* Legacy animations for backwards compatibility */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.33%);
+  }
+}
+
+@keyframes scroll-reverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+.animate-scroll-left {
+  animation: scroll 30s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-reverse 30s linear infinite;
+}
+
+.animate-scroll-fast {
+  animation: scroll 13s linear infinite;
+}
+
+/* Hot Topics Animation */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
