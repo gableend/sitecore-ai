@@ -263,7 +263,6 @@ export default function AgenticExperience() {
   // Scroll to top when a topic is selected
   useEffect(() => {
     if (selectedTopic) {
-      // Use requestAnimationFrame to ensure DOM has updated
       requestAnimationFrame(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
@@ -285,10 +284,7 @@ export default function AgenticExperience() {
     if (selectedTopic) {
       const topic = hotTopics.find(t => t.id === selectedTopic);
       if (topic) {
-        // Always load the appropriate content for the selected mode
         setCurrentContent(topic.content[mode]);
-
-        // Generate podcast when switching to podcast mode
         if (mode === 'podcast' && !podcastAudioUrl) {
           await generatePodcast(topic.content.text);
         }
@@ -308,8 +304,7 @@ export default function AgenticExperience() {
   const generatePodcast = async (textContent: string) => {
     setIsGeneratingPodcast(true);
     try {
-      // Convert article content to podcast script format - use shorter version for testing
-      const podcastScript = "Welcome to this test podcast. This is a simple test to see if our text-to-speech system is working correctly. Thank you for listening.";
+      const podcastScript = convertToPodcastScript(textContent);
 
       console.log('Generating podcast with script length:', podcastScript.length);
 
@@ -320,7 +315,7 @@ export default function AgenticExperience() {
         },
         body: JSON.stringify({
           text: podcastScript,
-          voice: 'alloy', // OpenAI TTS voice
+          voice: 'alloy',
           model: 'tts-1'
         }),
       });
@@ -344,21 +339,40 @@ export default function AgenticExperience() {
   };
 
   const convertToPodcastScript = (content: string) => {
-    // Convert article content to a more conversational podcast format
-    let script = content
-      // Remove markdown formatting
-      .replace(/#{1,6}\s/g, '')
-      .replace(/\*\*(.+?)\*\*/g, '$1')
-      // Add podcast introduction
-      .replace(/^(.+)/, 'Welcome to this deep dive into $1. Let\'s explore this fascinating topic together.\n\n$1')
-      // Make it more conversational
-      .replace(/\n\n/g, '\n\nNow, ')
-      .replace(/\. /g, '. Let me explain this further. ')
-      // Add natural pauses and transitions
-      .replace(/- /g, 'First, ')
-      .replace(/\n- /g, '\nNext, ')
-      // Add conclusion
-      + '\n\nThat wraps up our exploration of this topic. Thank you for listening, and I hope this has given you valuable insights to consider.';
+    // Clean up markdown formatting first
+    let cleanContent = content
+      .replace(/#{1,6}\s/g, '') // Remove heading markers
+      .replace(/\*\*(.+?)\*\*/g, '$1') // Remove bold formatting
+      .replace(/\n- /g, '\n') // Convert bullet points to regular text
+      .replace(/^- /g, ''); // Remove leading bullet points
+
+    // Split into paragraphs and extract key sections
+    const paragraphs = cleanContent.split('\n\n').filter(p => p.trim());
+
+    // Get the title (first paragraph) and key content
+    const title = paragraphs[0] || 'this topic';
+    const introduction = paragraphs[1] || '';
+    const keyPoint1 = paragraphs[2] || '';
+    const keyPoint2 = paragraphs[3] || '';
+
+    // Create a conversational podcast script
+    let script = `Welcome to this exploration of ${title}.
+
+${introduction}
+
+Let me break this down further. ${keyPoint1}
+
+${keyPoint2 ? `Additionally, ${keyPoint2}` : ''}
+
+That gives you a comprehensive overview of this important topic. Thank you for listening, and I hope you found this informative.`;
+
+    // Ensure we stay well under the 4000 character limit
+    if (script.length > 3800) {
+      // Truncate at a sentence boundary if possible
+      const truncated = script.substring(0, 3800);
+      const lastPeriod = truncated.lastIndexOf('.');
+      script = lastPeriod > 3000 ? truncated.substring(0, lastPeriod + 1) : truncated + '...';
+    }
 
     return script;
   };
@@ -368,7 +382,6 @@ export default function AgenticExperience() {
 
     setIsProcessing(true);
     try {
-      // Only adjust text content, not video URLs
       const contentToAdjust = contentMode === 'text' ? currentContent :
         selectedTopicData?.content.text || currentContent;
 
@@ -388,7 +401,6 @@ export default function AgenticExperience() {
         setCurrentContent(data.response);
         setAiPrompt('');
         setShowAIPanel(false);
-        // Switch to text mode to show the adjusted content
         if (contentMode !== 'text') {
           setContentMode('text');
         }
@@ -408,16 +420,12 @@ export default function AgenticExperience() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center relative">
-      {/* Background animation */}
       <LightWavesBackground />
-
-      {/* Navigation */}
       <Navigation />
 
       <div className="container max-w-7xl mx-auto z-10 px-4 py-10 mt-24 mb-10">
         {!selectedTopic ? (
           <>
-            {/* Hot AI Experience Topics Section */}
             <div className="mb-16">
               <div className="text-center mb-12">
                 <h1 className="text-5xl md:text-6xl font-semibold mb-6 tracking-tight">
@@ -464,7 +472,6 @@ export default function AgenticExperience() {
               </div>
             </div>
 
-            {/* Events Section */}
             <div className="mb-16">
               <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-semibold mb-4 text-gray-900">
@@ -476,7 +483,6 @@ export default function AgenticExperience() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Upcoming Events */}
                 <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-8 border border-purple-200">
                   <div className="flex items-center mb-6">
                     <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mr-4">
@@ -525,7 +531,6 @@ export default function AgenticExperience() {
                   </div>
                 </div>
 
-                {/* Past Events */}
                 <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 border border-gray-200">
                   <div className="flex items-center mb-6">
                     <div className="w-12 h-12 bg-gray-600 rounded-lg flex items-center justify-center mr-4">
@@ -574,9 +579,7 @@ export default function AgenticExperience() {
             </div>
           </>
         ) : (
-          /* Selected Topic Content */
           <div className="max-w-6xl mx-auto">
-            {/* Topic Header */}
             <div className="mb-8">
               <button
                 onClick={() => {
@@ -603,7 +606,6 @@ export default function AgenticExperience() {
               )}
             </div>
 
-            {/* Content Mode Switcher */}
             <div className="mb-8">
               <div className="flex justify-center">
                 <div className="bg-gray-100 p-1 rounded-lg inline-flex">
@@ -641,7 +643,6 @@ export default function AgenticExperience() {
               </div>
             </div>
 
-            {/* Content Display */}
             <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
               {contentMode === 'video' && (
                 <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden">
@@ -748,7 +749,6 @@ export default function AgenticExperience() {
 
               {contentMode === 'text' && (
                 <article className="max-w-none relative">
-                  {/* Reset Button */}
                   <button
                     onClick={handleResetContent}
                     className="absolute top-0 right-0 px-3 py-1 text-sm text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
@@ -761,7 +761,6 @@ export default function AgenticExperience() {
                     {currentContent.split('\n\n').map((section, index) => {
                       if (!section.trim()) return null;
 
-                      // Handle main heading
                       if (section.startsWith('# ')) {
                         return (
                           <h1 key={index} className="text-3xl font-bold text-gray-900 mb-6 leading-tight">
@@ -770,7 +769,6 @@ export default function AgenticExperience() {
                         );
                       }
 
-                      // Handle section headings
                       if (section.startsWith('## ')) {
                         return (
                           <h2 key={index} className="text-xl font-semibold text-gray-800 mb-3 mt-6 leading-tight border-b border-gray-200 pb-2">
@@ -779,7 +777,6 @@ export default function AgenticExperience() {
                         );
                       }
 
-                      // Handle sub-headings
                       if (section.startsWith('### ')) {
                         return (
                           <h3 key={index} className="text-lg font-medium text-gray-700 mb-2 mt-5 leading-tight">
@@ -788,7 +785,6 @@ export default function AgenticExperience() {
                         );
                       }
 
-                      // Handle bullet lists
                       if (section.includes('\n- ')) {
                         const items = section.split('\n').filter(line => line.startsWith('- '));
                         return (
@@ -805,7 +801,6 @@ export default function AgenticExperience() {
                         );
                       }
 
-                      // Handle regular paragraphs
                       return (
                         <p key={index} className="text-gray-700 leading-relaxed text-base mb-5">
                           <span dangerouslySetInnerHTML={{
@@ -818,13 +813,10 @@ export default function AgenticExperience() {
                 </article>
               )}
             </div>
-
-
           </div>
         )}
       </div>
 
-      {/* Floating AI Adjustment Button - Only on Article View */}
       {selectedTopic && contentMode === 'text' && (
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40">
           <button
@@ -840,7 +832,6 @@ export default function AgenticExperience() {
         </div>
       )}
 
-      {/* AI Adjustment Panel */}
       {showAIPanel && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
@@ -868,7 +859,6 @@ export default function AgenticExperience() {
                 rows={3}
               />
 
-              {/* Suggested Prompts */}
               <div className="mt-3">
                 <p className="text-xs text-gray-500 mb-2">Quick suggestions:</p>
                 <div className="flex flex-wrap gap-2">
@@ -917,7 +907,6 @@ export default function AgenticExperience() {
         </div>
       </footer>
 
-      {/* Sitecore footer gradient line */}
       <div className="absolute bottom-0 left-0 right-0 h-1 sitecore-gradient" />
     </div>
   );
