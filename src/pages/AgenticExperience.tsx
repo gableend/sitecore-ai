@@ -328,7 +328,16 @@ export default function AgenticExperience() {
       } else {
         const errorData = await response.json();
         console.error('Failed to generate podcast:', response.status, errorData);
-        alert(`Failed to generate podcast: ${errorData.error || 'Unknown error'}`);
+
+        // More user-friendly error messages
+        let errorMessage = 'Failed to generate podcast';
+        if (response.status === 408 || errorData.error?.includes('timeout')) {
+          errorMessage = 'Podcast generation timed out. Please try again.';
+        } else if (response.status === 502) {
+          errorMessage = 'Service temporarily unavailable. Please try again in a moment.';
+        }
+
+        alert(errorMessage);
       }
     } catch (error) {
       console.error('Error generating podcast:', error);
@@ -352,26 +361,23 @@ export default function AgenticExperience() {
     // Get the title (first paragraph) and key content
     const title = paragraphs[0] || 'this topic';
     const introduction = paragraphs[1] || '';
-    const keyPoint1 = paragraphs[2] || '';
-    const keyPoint2 = paragraphs[3] || '';
 
-    // Create a conversational podcast script
-    let script = `Welcome to this exploration of ${title}.
+    // Keep it shorter for faster processing
+    const introSentences = introduction.split('.').slice(0, 2).join('.') + '.';
 
-${introduction}
+    // Create a shorter, more focused podcast script
+    let script = `Welcome to this brief exploration of ${title}.
 
-Let me break this down further. ${keyPoint1}
+${introSentences}
 
-${keyPoint2 ? `Additionally, ${keyPoint2}` : ''}
+This provides a solid foundation for understanding this important topic. Thank you for listening.`;
 
-That gives you a comprehensive overview of this important topic. Thank you for listening, and I hope you found this informative.`;
-
-    // Ensure we stay well under the 4000 character limit
-    if (script.length > 3800) {
+    // Ensure we stay well under the limit for faster processing
+    if (script.length > 1500) {
       // Truncate at a sentence boundary if possible
-      const truncated = script.substring(0, 3800);
+      const truncated = script.substring(0, 1500);
       const lastPeriod = truncated.lastIndexOf('.');
-      script = lastPeriod > 3000 ? truncated.substring(0, lastPeriod + 1) : truncated + '...';
+      script = lastPeriod > 500 ? truncated.substring(0, lastPeriod + 1) : truncated + '.';
     }
 
     return script;

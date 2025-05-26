@@ -56,6 +56,10 @@ exports.handler = async (event, context) => {
     console.log('TTS Request - Voice:', voice);
     console.log('TTS Request - Model:', model);
 
+    // Add timeout to the fetch request
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+
     const response = await fetch('https://api.openai.com/v1/audio/speech', {
       method: 'POST',
       headers: {
@@ -68,7 +72,10 @@ exports.handler = async (event, context) => {
         voice: voice,
         response_format: 'mp3'
       }),
+      signal: controller.signal
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -102,6 +109,22 @@ exports.handler = async (event, context) => {
 
   } catch (error) {
     console.error('Function error:', error);
+
+    // Handle specific error types
+    if (error.name === 'AbortError') {
+      return {
+        statusCode: 408,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          error: 'Request timeout',
+          details: 'TTS generation took too long'
+        }),
+      };
+    }
+
     return {
       statusCode: 500,
       headers: {
