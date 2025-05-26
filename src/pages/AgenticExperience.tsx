@@ -84,7 +84,7 @@ Create more intuitive and engaging user experiences through the power of convers
     content: {
       video: 'https://share.synthesia.io/embeds/videos/46319d23-841d-4467-97fd-5af6d9cb053c',
       podcast: 'https://example.com/podcast3.mp3',
-      text: `# The Future of Search: How Marketers Can Get Ahead of the AI Disruption
+      text: `# The future of search: How marketers can get ahead of the AI disruption
 
 Search is changing—fast. And for marketers, especially those responsible for a brand's website and owned channels, this shift is more than algorithm tweaks. It's a disruption driven by AI that is fundamentally changing how people discover, evaluate, and interact with content.
 
@@ -92,13 +92,13 @@ In an AI-first search landscape, the rules are being rewritten. Zero-click resul
 
 But with disruption comes opportunity. Marketers who adapt early—organizing content for AI, embracing semantic search, and preparing for agentic experiences—can not only maintain their relevance but deepen their advantage.
 
-## AI is Arbitrating the Brand Experience
+## AI is arbitrating the brand experience
 
 Search is no longer just a list of links. It's a conversation, a summary, an answer—often without attribution or a click-through. Google's AI Overviews and Search Generative Experience (SGE) aim to give users what they need in the results page itself. The rise of zero-click search is already reducing traffic to brand-owned properties. In parallel, tools like ChatGPT, Perplexity, and Claude are becoming research companions for consumers and business buyers alike, sourcing and summarizing content into branded (or unbranded) outputs.
 
 The big shift? These AI tools are now arbitrating how your brand shows up—or if it shows up at all.
 
-## Goodbye SEO and SEM as You Knew Them
+## Goodbye SEO and SEM as you knew them
 
 Marketers have long relied on Search Engine Optimization (SEO) and Search Engine Marketing (SEM) to shape discoverability. But AI introduces a new discipline: Generative Engine Optimization (GEO).
 
@@ -110,13 +110,13 @@ GEO is about making your content legible, credible, and useful to AI systems. Th
 
 Those who treat this as a content strategy challenge—not just a search one—will win.
 
-## AI Advertising: A New Frontier
+## AI advertising: A new frontier
 
 AI summaries aren't just organic real estate. Google is already testing ad placements within AI-generated results. These are pulled dynamically from existing campaigns, but optimized based on query intent, context, and user behavior.
 
 For marketers, this is both an opportunity and a risk. Ad creative must now work harder to earn attention in a context where clicks are scarce and AI is the first—and sometimes only—touchpoint.
 
-## People May Not Visit Your Website. Their Agents Might.
+## People may not visit your website. Their agents might.
 
 As AI matures, expect to see a new kind of user journey: one led by autonomous agents. These AI assistants—whether built into smartphones, operating systems, or platforms like Amazon and OpenAI—will shop, browse, and evaluate on behalf of users.
 
@@ -124,13 +124,13 @@ What does that mean for marketers?
 
 You're no longer just designing for people. You're designing for agents—entities that prioritize speed, clarity, and confidence. Your content needs to be machine-readable, context-rich, and up-to-date.
 
-## Challenge or Opportunity? It Depends on What You Do Next.
+## Challenge or opportunity? It depends on what you do next.
 
 AI isn't just disrupting search—it's reshaping how your brand is seen, selected, and surfaced. And while this presents real challenges, especially for brands who rely on traditional SEO and web traffic strategies, it also unlocks new opportunities for those who adapt.
 
 Marketers who hesitate risk losing visibility as AI systems become the new gatekeepers of brand discovery. But those who act now—by organizing their content for machine readability, investing in modular architecture, and embracing AI-friendly strategies like semantic tagging and atomization—will thrive in a world where AI doesn't just direct traffic, it defines the experience.
 
-## How to Be Future Ready—Now
+## How to be future ready—now
 
 To meet this moment, marketers must rethink their content stack. That includes:
 
@@ -138,7 +138,7 @@ To meet this moment, marketers must rethink their content stack. That includes:
 - **Atomizing your content**: Breaking content into structured, brand-aligned building blocks that can be assembled dynamically—for web, chat, AI answers, or agent-driven discovery
 - **Embedding intelligence into your strategy**: Leveraging insights to understand how your content performs not just in search rankings, but in AI summaries and agent interactions
 
-## The Way Forward
+## The way forward
 
 Search is no longer just a channel—it's becoming the experience itself.
 
@@ -265,6 +265,10 @@ export default function AgenticExperience() {
     if (topic) {
       setCurrentContent(topic.content.text);
       setContentMode('text');
+      // Scroll to top of the page when topic is selected
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
     }
   };
 
@@ -273,10 +277,17 @@ export default function AgenticExperience() {
     if (selectedTopic) {
       const topic = hotTopics.find(t => t.id === selectedTopic);
       if (topic) {
-        // Reset to original content when switching modes (unless it was AI-adjusted text)
-        if (mode !== 'text' || currentContent === topic.content.text) {
-          setCurrentContent(topic.content[mode]);
-        }
+        // Always load the appropriate content for the selected mode
+        setCurrentContent(topic.content[mode]);
+      }
+    }
+  };
+
+  const handleResetContent = () => {
+    if (selectedTopic) {
+      const topic = hotTopics.find(t => t.id === selectedTopic);
+      if (topic) {
+        setCurrentContent(topic.content[contentMode]);
       }
     }
   };
@@ -612,15 +623,24 @@ export default function AgenticExperience() {
               )}
 
               {contentMode === 'text' && (
-                <article className="max-w-none">
-                  <div className="space-y-6">
+                <article className="max-w-none relative">
+                  {/* Reset Button */}
+                  <button
+                    onClick={handleResetContent}
+                    className="absolute top-0 right-0 px-3 py-1 text-sm text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+                    title="Reset to original content"
+                  >
+                    Reset
+                  </button>
+
+                  <div className="space-y-5 pr-16">
                     {currentContent.split('\n\n').map((section, index) => {
                       if (!section.trim()) return null;
 
                       // Handle main heading
                       if (section.startsWith('# ')) {
                         return (
-                          <h1 key={index} className="text-4xl font-bold text-gray-900 mb-8 leading-tight">
+                          <h1 key={index} className="text-3xl font-bold text-gray-900 mb-6 leading-tight">
                             {section.replace('# ', '')}
                           </h1>
                         );
@@ -629,7 +649,7 @@ export default function AgenticExperience() {
                       // Handle section headings
                       if (section.startsWith('## ')) {
                         return (
-                          <h2 key={index} className="text-2xl font-semibold text-gray-800 mb-4 mt-8 leading-tight border-b border-gray-200 pb-2">
+                          <h2 key={index} className="text-xl font-semibold text-gray-800 mb-3 mt-6 leading-tight border-b border-gray-200 pb-2">
                             {section.replace('## ', '')}
                           </h2>
                         );
@@ -638,7 +658,7 @@ export default function AgenticExperience() {
                       // Handle sub-headings
                       if (section.startsWith('### ')) {
                         return (
-                          <h3 key={index} className="text-xl font-medium text-gray-700 mb-3 mt-6 leading-tight">
+                          <h3 key={index} className="text-lg font-medium text-gray-700 mb-2 mt-5 leading-tight">
                             {section.replace('### ', '')}
                           </h3>
                         );
@@ -648,9 +668,9 @@ export default function AgenticExperience() {
                       if (section.includes('\n- ')) {
                         const items = section.split('\n').filter(line => line.startsWith('- '));
                         return (
-                          <ul key={index} className="space-y-3 mb-6">
+                          <ul key={index} className="space-y-2 mb-5">
                             {items.map((item, itemIndex) => (
-                              <li key={itemIndex} className="flex items-start text-gray-700 leading-relaxed">
+                              <li key={itemIndex} className="flex items-start text-gray-700 leading-relaxed text-base">
                                 <span className="inline-block w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0" />
                                 <span dangerouslySetInnerHTML={{
                                   __html: item.replace('- ', '').replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
@@ -663,7 +683,7 @@ export default function AgenticExperience() {
 
                       // Handle regular paragraphs
                       return (
-                        <p key={index} className="text-gray-700 leading-relaxed text-lg mb-6">
+                        <p key={index} className="text-gray-700 leading-relaxed text-base mb-5">
                           <span dangerouslySetInnerHTML={{
                             __html: section.replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
                           }} />
@@ -675,23 +695,26 @@ export default function AgenticExperience() {
               )}
             </div>
 
-            {/* AI Adjustment Button - Centered */}
-            {selectedTopic && (
-              <div className="flex justify-center mb-8">
-                <button
-                  onClick={() => setShowAIPanel(true)}
-                  className="sitecore-gradient text-white px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-3 transform hover:scale-105"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  <span className="font-medium text-lg">Adjust with Stream AI</span>
-                </button>
-              </div>
-            )}
+
           </div>
         )}
       </div>
+
+      {/* Floating AI Adjustment Button */}
+      {selectedTopic && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40">
+          <button
+            onClick={() => setShowAIPanel(true)}
+            className="sitecore-gradient text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 backdrop-blur-sm bg-opacity-90"
+            style={{ backgroundColor: 'rgba(235, 0, 26, 0.9)' }}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span className="font-medium">Adjust with Stream AI</span>
+          </button>
+        </div>
+      )}
 
       {/* AI Adjustment Panel */}
       {showAIPanel && (
@@ -720,6 +743,29 @@ export default function AgenticExperience() {
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none"
                 rows={3}
               />
+
+              {/* Suggested Prompts */}
+              <div className="mt-3">
+                <p className="text-xs text-gray-500 mb-2">Quick suggestions:</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "Summarize in 3 key points",
+                    "Make it more concise",
+                    "Explain for beginners",
+                    "Add more technical detail",
+                    "Create bullet points",
+                    "Translate to Spanish"
+                  ].map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      onClick={() => setAiPrompt(suggestion)}
+                      className="px-2 py-1 text-xs bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-700 rounded transition-colors"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="flex space-x-3">
