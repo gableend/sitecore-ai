@@ -7,14 +7,26 @@
 @tailwind utilities;
 
 :root {
-  /* Sitecore brand colors */
-  --sitecore-red: #FF2A1D;        /* Sitecore Red */
-  --sitecore-purple: #6A1B9A;     /* Ultraviolet/Purple */
-  --sitecore-black: #000000;
+  /* Sitecore Core Colors */
+  --sitecore-red: #FF1F38;
+  --sitecore-deep-red: #EB001A;
+  --sitecore-ultra-violet: #4300AD;
+
+  /* Sitecore Secondary Colors */
+  --sitecore-purple: #8629FF;
+  --sitecore-sky: #00AEFF;
+  --sitecore-pink: #FF7DFF;
+  --sitecore-blue: #001070;
+
+  /* Sitecore Neutral Colors */
+  --sitecore-black: #1E1C22;
+  --sitecore-gray-46: #746F7B;
+  --sitecore-gray-76: #C1BDC7;
+  --sitecore-gray-84: #D6D3DA;
+  --sitecore-gray-90: #E4E2E8;
+  --sitecore-gray-95: #F1F0F3;
+  --sitecore-gray-98: #F9F9FA;
   --sitecore-white: #FFFFFF;
-  --sitecore-gray-light: #F5F5F5;
-  --sitecore-gray-medium: #E0E0E0;
-  --sitecore-gray-dark: #757575;
 
   /* Base variables */
   --background: 0 0% 100%;
@@ -197,7 +209,7 @@ body {
 }
 
 .stream-pulse-circle {
-  background: linear-gradient(135deg, #ff004f, #6800ff);
+  background: linear-gradient(135deg, var(--sitecore-red), var(--sitecore-purple));
   border-radius: 50%;
   padding: 8px;
   animation: stream-pulse 3s infinite ease-in-out, stream-gradient-shift 6s infinite alternate;
@@ -222,7 +234,7 @@ body {
 }
 
 .stream-avatar-pulse {
-  background: linear-gradient(135deg, #ff004f, #6800ff);
+  background: linear-gradient(135deg, var(--sitecore-red), var(--sitecore-purple));
   border-radius: 50%;
   padding: 4px;
   animation: stream-pulse 3s infinite ease-in-out, stream-gradient-shift 6s infinite alternate;
@@ -256,19 +268,19 @@ body {
 
 @keyframes stream-gradient-shift {
   0% {
-    background: linear-gradient(135deg, #ff004f, #6800ff);
+    background: linear-gradient(135deg, var(--sitecore-red), var(--sitecore-purple));
   }
   100% {
-    background: linear-gradient(225deg, #6800ff, #ff004f);
+    background: linear-gradient(225deg, var(--sitecore-purple), var(--sitecore-red));
   }
 }
 
 @keyframes stream-thinking-pulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(255, 0, 79, 0.7);
+    box-shadow: 0 0 0 0 rgba(134, 41, 255, 0.7);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(255, 0, 79, 0);
+    box-shadow: 0 0 0 8px rgba(134, 41, 255, 0);
   }
 }
 

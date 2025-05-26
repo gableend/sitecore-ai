@@ -602,7 +602,7 @@ export default function AgenticExperience() {
                           </svg>
                         </button>
                         <div className="flex-1 bg-gray-200 h-2 rounded-full">
-                          <div className="bg-orange-500 h-2 rounded-full w-1/3" />
+                          <div className="bg-purple-500 h-2 rounded-full w-1/3" />
                         </div>
                         <span className="text-sm text-gray-500">12:34</span>
                       </div>
@@ -651,7 +651,7 @@ export default function AgenticExperience() {
                           <ul key={index} className="space-y-3 mb-6">
                             {items.map((item, itemIndex) => (
                               <li key={itemIndex} className="flex items-start text-gray-700 leading-relaxed">
-                                <span className="inline-block w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0" />
+                                <span className="inline-block w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0" />
                                 <span dangerouslySetInnerHTML={{
                                   __html: item.replace('- ', '').replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
                                 }} />
@@ -680,7 +680,7 @@ export default function AgenticExperience() {
               <div className="flex justify-center mb-8">
                 <button
                   onClick={() => setShowAIPanel(true)}
-                  className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-3 transform hover:scale-105"
+                  className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-3 transform hover:scale-105"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -717,7 +717,7 @@ export default function AgenticExperience() {
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
                 placeholder="e.g., Summarize in 3 key points, Translate to Spanish, Make it more technical, etc."
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none"
                 rows={3}
               />
             </div>
@@ -732,7 +732,7 @@ export default function AgenticExperience() {
               <button
                 onClick={handleAIAdjustment}
                 disabled={!aiPrompt.trim() || isProcessing}
-                className="flex-1 px-4 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:from-orange-600 hover:to-pink-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-lg hover:from-purple-600 hover:to-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isProcessing ? 'Processing...' : 'Apply'}
               </button>
