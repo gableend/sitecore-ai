@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import LightWavesBackground from '../components/StarryBackground';
 import Navigation from '../components/Navigation';
+<<<<<<< HEAD
 import ContentGrid, { type ContentItem } from '../components/ContentGrid';
 import { digitalVisionariesData } from '../components/DigitalVisionaries';
+=======
+import ContentGrid, { ContentItem } from '../components/ContentGrid';
+>>>>>>> c26922fd67af46001d0c90585528a76461dd195d
 import { Link, useSearchParams } from 'react-router-dom';
 
 // Add Speech Recognition types
@@ -310,6 +314,7 @@ const SearchComponent = ({ onSearch }: SearchComponentProps) => {
         </div>
       </form>
 
+<<<<<<< HEAD
         {/* Predictive Suggestions Dropdown */}
         {showSuggestions && filteredSuggestions.length > 0 && (
           <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 z-50 max-h-60 overflow-y-auto">
@@ -346,6 +351,44 @@ const SearchComponent = ({ onSearch }: SearchComponentProps) => {
             </div>
           </div>
         )}
+=======
+      {/* Predictive Suggestions Dropdown */}
+      {showSuggestions && filteredSuggestions.length > 0 && (
+        <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 z-50 max-h-60 overflow-y-auto">
+          {filteredSuggestions.map((suggestion, index) => (
+            <button
+              key={index}
+              onClick={() => handleSuggestionClick(suggestion)}
+              className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 text-gray-700 text-sm"
+            >
+              <div className="flex items-center gap-3">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span>{suggestion}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Suggested Searches */}
+      {!showSuggestions && query.trim().length === 0 && (
+        <div className="mt-6">
+          <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto">
+            {suggestedSearches.map((suggestion, index) => (
+              <button
+                key={index}
+                onClick={() => handleSuggestionClick(suggestion)}
+                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-xs font-medium transition-colors hover:shadow-sm border border-gray-200 whitespace-nowrap"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+>>>>>>> c26922fd67af46001d0c90585528a76461dd195d
     </div>
   );
 };
@@ -722,6 +765,7 @@ export default function AgenticExperience() {
     }
   };
 
+<<<<<<< HEAD
 
 
   const handleSearch = (query: string, mode: 'search' | 'stream') => {
@@ -767,6 +811,8 @@ export default function AgenticExperience() {
     }
   };
 
+=======
+>>>>>>> c26922fd67af46001d0c90585528a76461dd195d
   const generatePodcast = async (textContent: string) => {
     setIsGeneratingPodcast(true);
     setLoadedChunks(0);
@@ -900,9 +946,67 @@ export default function AgenticExperience() {
     return chunks;
   };
 
+<<<<<<< HEAD
 
 
 
+=======
+  const handleAIAdjustment = async () => {
+    if (!aiPrompt.trim() || !currentContent) return;
+
+    setIsProcessing(true);
+    try {
+      const contentToAdjust = contentMode === 'text' ? currentContent :
+        selectedTopicData?.content.text || currentContent;
+
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: `Please adjust the following content based on this request: "${aiPrompt}"\n\nContent to adjust:\n${contentToAdjust}`,
+          conversation: []
+        }),
+      });
+
+      const data = await response.json();
+      if (data.response) {
+        setCurrentContent(data.response);
+        setAiPrompt('');
+        setShowAIPanel(false);
+        if (contentMode !== 'text') {
+          setContentMode('text');
+        }
+      } else if (data.error) {
+        console.error('API Error:', data.error);
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error adjusting content:', error);
+      alert('Error adjusting content. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleSearch = async (query: string, mode: 'search' | 'stream') => {
+    console.log('handleSearch called with:', query, mode);
+    setSearchQuery(query);
+    setIsSearching(true);
+    setSearchResults([]); // Clear previous results
+
+    try {
+      // Simulate streaming search API behavior
+      await simulateStreamingSearch(query, mode);
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+>>>>>>> c26922fd67af46001d0c90585528a76461dd195d
 
   const handleContentSelect = (content: ContentItem) => {
     setSelectedTopic(content.id);
@@ -1114,6 +1218,232 @@ export default function AgenticExperience() {
               isSearching={isSearching}
               onContentSelect={handleContentSelect}
             />
+<<<<<<< HEAD
+=======
+
+                {/* Search Results Container */}
+                {(isSearching || searchResults.length > 0) && (
+                  <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-16">
+                    <div id="search-results-container">
+                      {/* Search Header */}
+                      <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-purple-200">
+                        <div className="flex items-center gap-3">
+                          <div className="text-purple-600 text-lg font-semibold">🔍 Search Results</div>
+                          {isSearching && (
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                              <div className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-purple-500 rounded-full"></div>
+                              <span>Finding relevant content...</span>
+                            </div>
+                          )}
+                          {!isSearching && searchResults.length > 0 && (
+                            <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                              {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </div>
+
+                      {/* Search Results Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {searchResults.map((result, index) => (
+                        <div
+                          key={`${result.id}-${index}`}
+                          className="bg-white rounded-xl border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all duration-300 overflow-hidden h-fit"
+                        >
+                          {/* Result Type - Content Reference */}
+                          {result.type === 'content_reference' && (
+                            <>
+                              {result.image && (
+                                <div className="h-40 overflow-hidden">
+                                  <img
+                                    src={result.image}
+                                    alt={result.title}
+                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                  />
+                                </div>
+                              )}
+                              <div className="p-5">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-3 text-left hover:text-purple-600 cursor-pointer leading-tight"
+                                    onClick={() => {
+                                      setSelectedTopic(result.originalId);
+                                      setCurrentContent(result.content.fullContent);
+                                      setContentMode('text');
+                                    }}>
+                                  {result.title}
+                                </h3>
+                                <p className="text-gray-600 text-sm leading-relaxed mb-4 text-left">
+                                  {result.description}
+                                </p>
+                                <p className="text-gray-700 text-sm leading-relaxed mb-4 text-left line-clamp-3">
+                                  {result.content.text.length > 120 ?
+                                    result.content.text.substring(0, 120) + "..." :
+                                    result.content.text}
+                                </p>
+                                <button
+                                  onClick={() => {
+                                    setSelectedTopic(result.originalId);
+                                    setCurrentContent(result.content.fullContent);
+                                    setContentMode('text');
+                                  }}
+                                  className="inline-flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium group transition-colors"
+                                >
+                                  <span>Continue reading</span>
+                                  <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </button>
+                              </div>
+                              <div className="px-5 py-3 bg-gradient-to-r from-purple-50 to-gray-50 border-t border-gray-100">
+                                <div className="flex items-center justify-between text-xs text-gray-500">
+                                  <span className="font-medium">{result.source}</span>
+                                  {result.similarity && (
+                                    <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-medium">
+                                      {(result.similarity * 100).toFixed(0)}% match
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                          {/* Result Type - Images */}
+                          {result.type === 'images' && (
+                            <>
+                              <div className="p-5">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-3 text-left">{result.title}</h3>
+                                <p className="text-gray-600 text-sm mb-4 text-left">{result.description}</p>
+                                <div className="grid grid-cols-2 gap-2">
+                                  {result.content.images.slice(0, 4).map((image: string, imgIndex: number) => (
+                                    <img
+                                      key={imgIndex}
+                                      src={image}
+                                      alt={`Related image ${imgIndex + 1}`}
+                                      className="w-full h-24 object-cover rounded-lg border border-gray-200 hover:scale-105 transition-transform duration-200"
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="px-5 py-3 bg-gradient-to-r from-blue-50 to-gray-50 border-t border-gray-100">
+                                <div className="flex items-center justify-between text-xs text-gray-500">
+                                  <span className="font-medium">{result.source}</span>
+                                  <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
+                                    Media Gallery
+                                  </span>
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                          {/* Result Type - AI Response */}
+                          {result.type === 'ai_response' && (
+                            <>
+                              <div className="p-5">
+                                <div className="flex items-center gap-2 mb-4">
+                                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                                    🤖 AI Response
+                                  </div>
+                                  {result.content.isStreaming && (
+                                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                                      <div className="animate-pulse w-2 h-2 bg-green-500 rounded-full"></div>
+                                      <span>Streaming...</span>
+                                    </div>
+                                  )}
+                                </div>
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4 text-left">{result.title}</h3>
+                                <div className="text-gray-700 text-sm leading-relaxed text-left">
+                                  <div dangerouslySetInnerHTML={{
+                                    __html: result.content.text.replace(/\n\n/g, '</p><p class="mb-3">').replace(/^(.+)$/, '<p class="mb-3">$1</p>')
+                                  }} />
+                                </div>
+                              </div>
+                              <div className="px-5 py-3 bg-gradient-to-r from-green-50 to-gray-50 border-t border-gray-100">
+                                <div className="flex items-center justify-between text-xs text-gray-500">
+                                  <span className="font-medium">{result.source}</span>
+                                  <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
+                                    AI Generated
+                                  </span>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                      {/* Search Actions */}
+                      {searchResults.length > 0 && !isSearching && (
+                        <div className="mt-8 flex justify-center gap-4 pt-6 border-t border-gray-200">
+                          <button
+                            onClick={() => setSearchResults([])}
+                            className="px-4 py-2 text-purple-600 hover:text-white hover:bg-purple-600 border border-purple-600 rounded-lg font-medium text-sm transition-all duration-200"
+                          >
+                            Clear Results
+                          </button>
+                          <button
+                            onClick={() => window.location.reload()}
+                            className="px-4 py-2 text-gray-600 hover:text-white hover:bg-gray-600 border border-gray-600 rounded-lg font-medium text-sm transition-all duration-200"
+                          >
+                            New Search
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Hot Topics Section */}
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">Hot Topics</h2>
+                  <p className="text-gray-600 max-w-2xl mx-auto">
+                    Discover the latest trends and insights in AI-powered digital experiences
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {hotTopics.map((topic, index) => (
+                  <div
+                    key={topic.id}
+                    className="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 border border-gray-100 overflow-hidden"
+                    onClick={() => handleTopicSelect(topic.id)}
+                    style={{
+                      animationDelay: `${index * 100}ms`,
+                      animation: 'slideInUp 0.6s ease-out forwards'
+                    }}
+                  >
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={topic.image}
+                        alt={topic.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <h3 className="text-white font-semibold text-lg mb-1">{topic.title}</h3>
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <p className="text-gray-600 text-sm leading-relaxed">{topic.description}</p>
+                      <div className="mt-4 flex items-center text-purple-600 text-sm font-medium">
+                        <span>Explore Topic</span>
+                        <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <KeyAIConcepts />
+
+            <DigitalVisionaries />
+
+>>>>>>> c26922fd67af46001d0c90585528a76461dd195d
           </>
         ) : (
           <div className="max-w-6xl mx-auto">
@@ -1182,6 +1512,7 @@ export default function AgenticExperience() {
 
             <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
               {contentMode === 'video' && (
+<<<<<<< HEAD
               <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden">
                 {selectedTopicData?.id === 'future-of-search' ? (
                   <iframe
@@ -1270,6 +1601,127 @@ export default function AgenticExperience() {
                             setTotalChunks(0);
                             setCurrentChunkIndex(0);
                             setAudioQueue([]);
+=======
+                <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden">
+                  {selectedTopicData?.id === 'future-of-search' ? (
+                    <iframe
+                      src={currentContent}
+                      loading="lazy"
+                      title="Synthesia video player - Future Search"
+                      allowFullScreen
+                      allow="encrypted-media; fullscreen;"
+                      className="w-full h-full border-none"
+                    />
+                  ) : selectedTopicData?.id === 'liz-nelson-ai-cms' || selectedTopicData?.id === 'ru-barry-ai-revolution' ? (
+                    <video
+                      src={currentContent}
+                      controls
+                      className="w-full h-full"
+                      poster={selectedTopicData?.image}
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-white text-center">
+                        <svg className="w-16 h-16 mx-auto mb-4 opacity-60" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        <p className="text-lg">Video content coming soon</p>
+                        <p className="text-sm opacity-60">Integration with video platform in progress</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {contentMode === 'podcast' && (
+                <div className="bg-gray-50 rounded-lg p-8">
+                  <div className="max-w-2xl mx-auto">
+                    <div className="text-center mb-6">
+                      <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 3a9 9 0 0 0-9 9v7c0 1.1.9 2 2 2h4v-8H5v-1a7 7 0 0 1 14 0v1h-4v8h4c1.1 0 2-.9 2-2v-7a9 9 0 0 0-9-9z"/>
+                      </svg>
+                      <h3 className="text-lg font-semibold mb-2">AI-Generated Podcast</h3>
+                      <p className="text-gray-600 mb-4">
+                        {isGeneratingPodcast
+                          ? loadedChunks === 0
+                            ? 'Generating audio from article content...'
+                            : `Streaming audio... (${loadedChunks}/${totalChunks} chunks ready)`
+                          : podcastAudioUrl
+                            ? 'Article converted to podcast using OpenAI TTS'
+                            : 'Click to generate podcast from article content'
+                        }
+                      </p>
+                    </div>
+
+                    {isGeneratingPodcast && (
+                      <div className="bg-white rounded-lg p-6 border text-center">
+                        <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                        <p className="text-gray-600">
+                          {loadedChunks === 0
+                            ? 'Converting article to audio...'
+                            : `Streaming audio... (${loadedChunks}/${totalChunks} chunks ready)`}
+                        </p>
+                        <p className="text-sm text-gray-500 mt-2">This may take a moment</p>
+                      </div>
+                    )}
+
+                    {podcastAudioUrl && !isGeneratingPodcast && (
+                      <div className="bg-white rounded-lg p-6 border">
+                        <audio
+                          id="progressive-podcast-audio"
+                          controls
+                          className="w-full mb-4"
+                          onEnded={playNextChunk}
+                        >
+                          <source src={podcastAudioUrl} type="audio/mpeg" />
+                          Your browser does not support the audio element.
+                        </audio>
+                        <div className="text-center">
+                          <p className="text-sm text-gray-600">
+                            🎙️ AI-narrated version of "{selectedTopicData?.title}"
+                          </p>
+                          <button
+                            onClick={() => {
+                              setPodcastAudioUrl(null);
+                              setPodcastChunks([]);
+                              setLoadedChunks(0);
+                              setTotalChunks(0);
+                              setCurrentChunkIndex(0);
+                              setAudioQueue([]);
+                              if (selectedTopic) {
+                                const topic = getTopicContent(selectedTopic);
+                                if (topic) {
+                                  generatePodcast(topic.content.text);
+                                }
+                              }
+                            }}
+                            className="mt-2 text-sm text-purple-600 hover:text-purple-700"
+                          >
+                            Regenerate Audio
+                          </button>
+                        </div>
+                        {audioQueue.length > 0 && (
+                          <div className="mt-4 text-xs text-gray-500">
+                            <p>
+                              {`Ready chunks: ${loadedChunks}/${totalChunks}. `}
+                              {currentChunkIndex < audioQueue.length
+                                ? 'Next chunk will play automatically.'
+                                : loadedChunks < totalChunks
+                                  ? 'Waiting for more audio...'
+                                  : 'All chunks played.'}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {!podcastAudioUrl && !isGeneratingPodcast && (
+                      <div className="bg-white rounded-lg p-6 border text-center">
+                        <button
+                          onClick={() => {
+>>>>>>> c26922fd67af46001d0c90585528a76461dd195d
                             if (selectedTopic) {
                               const topic = getTopicContent(selectedTopic);
                               if (topic) {
@@ -1277,6 +1729,7 @@ export default function AgenticExperience() {
                               }
                             }
                           }}
+<<<<<<< HEAD
                           className="mt-2 text-sm text-purple-600 hover:text-purple-700"
                         >
                           Regenerate Audio
@@ -1568,10 +2021,277 @@ export default function AgenticExperience() {
                 </div>
               </div>
             )}
+=======
+                          className="sitecore-gradient text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-all"
+                        >
+                          🎙️ Generate Podcast
+                        </button>
+                        <p className="text-sm text-gray-500 mt-2">
+                          Uses OpenAI TTS to convert the article into audio
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {contentMode === 'text' && (
+                <article className="max-w-none relative">
+                  <button
+                    onClick={handleResetContent}
+                    className="absolute top-0 right-0 px-3 py-1 text-sm text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+                    title="Reset to original content"
+                  >
+                    Reset
+                  </button>
+
+                  <div className="space-y-5 pr-16">
+                    {(() => {
+                      const allSections = currentContent.split('\n\n');
+                      const blockquoteMarkers = new Set();
+
+                      for (let i = 0; i < allSections.length; i++) {
+                        const section = allSections[i];
+                        if (section.startsWith('> **"') ||
+                            section.startsWith('> — **') ||
+                            section.startsWith('> *') ||
+                            section.includes('*Sitecore*') ||
+                            section.trim() === '>') {
+                          blockquoteMarkers.add(i);
+                        }
+                      }
+
+                      const processedSections = [];
+                      let i = 0;
+
+                      while (i < allSections.length) {
+                        const section = allSections[i];
+
+                        if (!section.trim()) {
+                          i++;
+                          continue;
+                        }
+
+                        if (blockquoteMarkers.has(i)) {
+                          if (section.startsWith('> **"')) {
+                            let blockquoteContent = section;
+                            let j = i + 1;
+
+                            while (j < allSections.length && blockquoteMarkers.has(j)) {
+                              blockquoteContent += '\n\n' + allSections[j];
+                              j++;
+                            }
+
+                            const lines = blockquoteContent.split('\n').filter(line => line.trim());
+                            const quoteLine = lines.find(line => line.startsWith('> **"'));
+                            const authorLine = lines.find(line => line.startsWith('> — **'));
+                            const titleLine = lines.find(line => line.startsWith('> *') && !line.includes('—') && !line.includes('Sitecore'));
+                            const companyLine = lines.find(line => line.includes('*Sitecore*'));
+
+                            if (quoteLine && authorLine) {
+                              const quote = quoteLine.replace('> **"', '').replace('"**', '');
+                              const author = authorLine.replace('> — **', '').replace('**', '');
+                              const title = titleLine ? titleLine.replace('> *', '').replace('*', '') : '';
+                              const company = companyLine ? companyLine.replace('> *', '').replace('*', '') : '';
+
+                              processedSections.push({
+                                type: 'testimonial',
+                                content: { quote, author, title, company },
+                                index: i
+                              });
+                            }
+
+                            i = j;
+                          } else {
+                            i++;
+                          }
+                        } else {
+                          if (!section.includes('> **"') && !section.includes('"**')) {
+                            processedSections.push({
+                              type: 'regular',
+                              content: section,
+                              index: i
+                            });
+                          }
+                          i++;
+                        }
+                      }
+
+                      return processedSections.map((item, index) => {
+                        if (item.type === 'testimonial') {
+                          const testimonialContent = item.content as { quote: string; author: string; title: string; company: string; };
+                          const { quote, author, title, company } = testimonialContent;
+                          return (
+                            <div key={index} className="testimonial bg-gray-50 rounded-xl p-8 my-8 border-l-4 border-purple-500">
+                              <blockquote>
+                                <div className="text-lg leading-relaxed text-gray-900 mb-6 italic">
+                                  "{quote}<span className="relative">.</span>"
+                                </div>
+                                <footer>
+                                  <div className="flex flex-row items-start justify-start gap-4">
+                                    <div className="flex flex-col">
+                                      <cite className="not-italic">
+                                        <p className="text-base font-semibold text-gray-900 leading-tight">{author}</p>
+                                        <p className="text-sm text-gray-600 leading-tight">{title}</p>
+                                        <p className="text-sm text-gray-600 leading-tight">{company}</p>
+                                      </cite>
+                                    </div>
+                                  </div>
+                                </footer>
+                              </blockquote>
+                            </div>
+                          );
+                        }
+
+                        const section = item.content as string;
+
+                        if (section.startsWith('# ')) {
+                          return (
+                            <h1 key={index} className="text-3xl font-bold text-gray-900 mb-6 leading-tight">
+                              {section.replace('# ', '')}
+                            </h1>
+                          );
+                        }
+
+                        if (section.startsWith('## ')) {
+                          return (
+                            <h2 key={index} className="text-xl font-semibold text-gray-800 mb-3 mt-6 leading-tight border-b border-gray-200 pb-2">
+                              {section.replace('## ', '')}
+                            </h2>
+                          );
+                        }
+
+                        if (section.startsWith('### ')) {
+                          return (
+                            <h3 key={index} className="text-lg font-medium text-gray-700 mb-2 mt-5 leading-tight">
+                              {section.replace('### ', '')}
+                            </h3>
+                          );
+                        }
+
+                        if (section.includes('\n- ')) {
+                          const items = section.split('\n').filter((line: string) => line.startsWith('- '));
+                          return (
+                            <ul key={index} className="space-y-2 mb-5">
+                              {items.map((item: string, itemIndex: number) => (
+                                <li key={itemIndex} className="flex items-start text-gray-700 leading-relaxed text-base">
+                                  <span className="inline-block w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0" />
+                                  <span dangerouslySetInnerHTML={{
+                                    __html: item.replace('- ', '').replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
+                                  }} />
+                                </li>
+                              ))}
+                            </ul>
+                          );
+                        }
+
+                        return (
+                          <p key={index} className="text-gray-700 leading-relaxed text-base mb-5">
+                            <span dangerouslySetInnerHTML={{
+                              __html: section.replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
+                            }} />
+                          </p>
+                        );
+                      });
+                    })()}
+                  </div>
+                </article>
+              )}
+            </div>
+>>>>>>> c26922fd67af46001d0c90585528a76461dd195d
           </div>
         )}
       </div>
 
+<<<<<<< HEAD
+=======
+      {selectedTopic && contentMode === 'text' && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40">
+          <button
+            onClick={() => setShowAIPanel(true)}
+            className="sitecore-gradient text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 backdrop-blur-sm bg-opacity-90"
+            style={{ backgroundColor: 'rgba(235, 0, 26, 0.9)' }}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span className="font-medium">Adjust with Stream AI</span>
+          </button>
+        </div>
+      )}
+
+      {showAIPanel && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Adjust Content with AI</h3>
+              <button
+                onClick={() => setShowAIPanel(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                How would you like to adjust the content?
+              </label>
+              <textarea
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                placeholder="e.g., Summarize in 3 key points, Translate to Spanish, Make it more technical, etc."
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none"
+                rows={3}
+              />
+
+              <div className="mt-3">
+                <p className="text-xs text-gray-500 mb-2">Quick suggestions:</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "Summarize in 3 key points",
+                    "Make it more concise",
+                    "Explain for beginners",
+                    "Add more technical detail",
+                    "Create bullet points",
+                    "Translate to Spanish"
+                  ].map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      onClick={() => setAiPrompt(suggestion)}
+                      className="px-2 py-1 text-xs bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-700 rounded transition-colors"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowAIPanel(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAIAdjustment}
+                disabled={!aiPrompt.trim() || isProcessing}
+                className="flex-1 px-4 py-2 sitecore-gradient text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isProcessing ? 'Processing...' : 'Apply'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+
+>>>>>>> c26922fd67af46001d0c90585528a76461dd195d
       <footer className="mt-8 text-center text-sm text-gray-500 w-full">
         <div className="border-t border-gray-200 pt-8 pb-10 w-full max-w-lg mx-auto px-4">
           <p>© 2025 Sitecore. All rights reserved.</p>
