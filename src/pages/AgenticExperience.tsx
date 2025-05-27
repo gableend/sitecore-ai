@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import LightWavesBackground from '../components/StarryBackground';
 import Navigation from '../components/Navigation';
-import KeyAIConcepts from '../components/KeyAIConcepts';
-import DigitalVisionaries, { digitalVisionariesData } from '../components/DigitalVisionaries';
-import ReportsAndInsights from '../components/ReportsAndInsights';
+import ContentGrid, { ContentItem } from '../components/ContentGrid';
 import { Link, useSearchParams } from 'react-router-dom';
 
 // Add Speech Recognition types
@@ -623,6 +621,7 @@ export default function AgenticExperience() {
   const [audioQueue, setAudioQueue] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     const topicParam = searchParams.get('topic');
@@ -896,6 +895,7 @@ export default function AgenticExperience() {
 
   const handleSearch = async (query: string, mode: 'search' | 'stream') => {
     console.log('handleSearch called with:', query, mode);
+    setSearchQuery(query);
     setIsSearching(true);
     setSearchResults([]); // Clear previous results
 
@@ -908,6 +908,12 @@ export default function AgenticExperience() {
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const handleContentSelect = (content: ContentItem) => {
+    setSelectedTopic(content.id);
+    setCurrentContent(content.fullContent || '');
+    setContentMode('text');
   };
 
   // Fallback keyword search function
@@ -1104,6 +1110,16 @@ export default function AgenticExperience() {
 
                 {/* Search Component */}
                 <SearchComponent onSearch={handleSearch} />
+              </div>
+            </div>
+
+            {/* Content Grid */}
+            <ContentGrid
+              searchQuery={searchQuery}
+              searchResults={searchResults}
+              isSearching={isSearching}
+              onContentSelect={handleContentSelect}
+            />
 
                 {/* Search Results Container */}
                 {(isSearching || searchResults.length > 0) && (
@@ -1785,8 +1801,7 @@ export default function AgenticExperience() {
         </div>
       )}
 
-      {/* Reports and Insights Section */}
-      <ReportsAndInsights />
+
 
       <footer className="mt-8 text-center text-sm text-gray-500 w-full">
         <div className="border-t border-gray-200 pt-8 pb-10 w-full max-w-lg mx-auto px-4">
