@@ -1110,17 +1110,22 @@ export default function AgenticExperience() {
                 {/* Search Component */}
                 <SearchComponent onSearch={handleSearch} />
 
-                {/* Search Results - Sitecore Search Style */}
+                {/* Search Results - Grid Layout */}
                 {(isSearching || searchResults.length > 0) && (
-                  <div id="search-results-container" className="mb-12">
+                  <div id="search-results-container" className="mb-16">
                     {/* Search Header */}
-                    <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+                    <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-purple-200">
                       <div className="flex items-center gap-3">
-                        <div className="text-orange-500 text-sm font-medium">⚡ Sitecore Search</div>
+                        <div className="text-purple-600 text-lg font-semibold">🔍 Search Results</div>
                         {isSearching && (
                           <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <div className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-orange-500 rounded-full"></div>
-                            <span>Searching...</span>
+                            <div className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-purple-500 rounded-full"></div>
+                            <span>Finding relevant content...</span>
+                          </div>
+                        )}
+                        {!isSearching && searchResults.length > 0 && (
+                          <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                            {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
                           </div>
                         )}
                       </div>
@@ -1129,62 +1134,64 @@ export default function AgenticExperience() {
                       </div>
                     </div>
 
-                    {/* Search Results */}
-                    <div className="space-y-6">
+                    {/* Search Results Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {searchResults.map((result, index) => (
                         <div
                           key={`${result.id}-${index}`}
-                          className="bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-200 overflow-hidden"
+                          className="bg-white rounded-xl border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all duration-300 overflow-hidden h-fit"
                         >
                           {/* Result Type - Content Reference */}
                           {result.type === 'content_reference' && (
                             <>
-                              <div className="p-6">
-                                <div className="flex items-start gap-4">
-                                  {result.image && (
-                                    <div className="flex-shrink-0">
-                                      <img
-                                        src={result.image}
-                                        alt={result.title}
-                                        className="w-16 h-16 object-cover rounded-lg"
-                                      />
-                                    </div>
-                                  )}
-                                  <div className="flex-grow">
-                                    <h3 className="text-xl font-semibold text-gray-900 mb-2 hover:text-purple-600 cursor-pointer"
-                                        onClick={() => {
-                                          setSelectedTopic(result.originalId);
-                                          setCurrentContent(result.content.fullContent);
-                                          setContentMode('text');
-                                        }}>
-                                      {result.title}
-                                    </h3>
-                                    <p className="text-gray-700 text-sm leading-relaxed mb-4">
-                                      {result.description}
-                                    </p>
-                                    <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                                      {result.content.text}
-                                    </p>
-                                    <button
-                                      onClick={() => {
-                                        setSelectedTopic(result.originalId);
-                                        setCurrentContent(result.content.fullContent);
-                                        setContentMode('text');
-                                      }}
-                                      className="inline-flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium group"
-                                    >
-                                      <span>Continue reading</span>
-                                      <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                      </svg>
-                                    </button>
-                                  </div>
+                              {result.image && (
+                                <div className="h-40 overflow-hidden">
+                                  <img
+                                    src={result.image}
+                                    alt={result.title}
+                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                  />
                                 </div>
+                              )}
+                              <div className="p-5">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-3 text-left hover:text-purple-600 cursor-pointer leading-tight"
+                                    onClick={() => {
+                                      setSelectedTopic(result.originalId);
+                                      setCurrentContent(result.content.fullContent);
+                                      setContentMode('text');
+                                    }}>
+                                  {result.title}
+                                </h3>
+                                <p className="text-gray-600 text-sm leading-relaxed mb-4 text-left">
+                                  {result.description}
+                                </p>
+                                <p className="text-gray-700 text-sm leading-relaxed mb-4 text-left line-clamp-3">
+                                  {result.content.text.length > 120 ?
+                                    result.content.text.substring(0, 120) + "..." :
+                                    result.content.text}
+                                </p>
+                                <button
+                                  onClick={() => {
+                                    setSelectedTopic(result.originalId);
+                                    setCurrentContent(result.content.fullContent);
+                                    setContentMode('text');
+                                  }}
+                                  className="inline-flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium group transition-colors"
+                                >
+                                  <span>Continue reading</span>
+                                  <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </button>
                               </div>
-                              <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
+                              <div className="px-5 py-3 bg-gradient-to-r from-purple-50 to-gray-50 border-t border-gray-100">
                                 <div className="flex items-center justify-between text-xs text-gray-500">
-                                  <span>Source: {result.source}</span>
-                                  <span>Content Reference</span>
+                                  <span className="font-medium">{result.source}</span>
+                                  {result.similarity && (
+                                    <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-medium">
+                                      {(result.similarity * 100).toFixed(0)}% match
+                                    </span>
+                                  )}
                                 </div>
                               </div>
                             </>
@@ -1193,24 +1200,26 @@ export default function AgenticExperience() {
                           {/* Result Type - Images */}
                           {result.type === 'images' && (
                             <>
-                              <div className="p-6">
-                                <h3 className="text-xl font-semibold text-gray-900 mb-2">{result.title}</h3>
-                                <p className="text-gray-600 text-sm mb-4">{result.description}</p>
-                                <div className="grid grid-cols-3 gap-2">
-                                  {result.content.images.map((image: string, imgIndex: number) => (
+                              <div className="p-5">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-3 text-left">{result.title}</h3>
+                                <p className="text-gray-600 text-sm mb-4 text-left">{result.description}</p>
+                                <div className="grid grid-cols-2 gap-2">
+                                  {result.content.images.slice(0, 4).map((image: string, imgIndex: number) => (
                                     <img
                                       key={imgIndex}
                                       src={image}
                                       alt={`Related image ${imgIndex + 1}`}
-                                      className="w-full h-20 object-cover rounded-lg border border-gray-200"
+                                      className="w-full h-24 object-cover rounded-lg border border-gray-200 hover:scale-105 transition-transform duration-200"
                                     />
                                   ))}
                                 </div>
                               </div>
-                              <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
+                              <div className="px-5 py-3 bg-gradient-to-r from-blue-50 to-gray-50 border-t border-gray-100">
                                 <div className="flex items-center justify-between text-xs text-gray-500">
-                                  <span>Source: {result.source}</span>
-                                  <span>Media Gallery</span>
+                                  <span className="font-medium">{result.source}</span>
+                                  <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
+                                    Media Gallery
+                                  </span>
                                 </div>
                               </div>
                             </>
@@ -1219,10 +1228,10 @@ export default function AgenticExperience() {
                           {/* Result Type - AI Response */}
                           {result.type === 'ai_response' && (
                             <>
-                              <div className="p-6">
+                              <div className="p-5">
                                 <div className="flex items-center gap-2 mb-4">
-                                  <div className="sitecore-gradient text-white px-2 py-1 rounded-full text-xs font-medium">
-                                    Stream AI
+                                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                                    🤖 AI Response
                                   </div>
                                   {result.content.isStreaming && (
                                     <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -1231,17 +1240,19 @@ export default function AgenticExperience() {
                                     </div>
                                   )}
                                 </div>
-                                <h3 className="text-xl font-semibold text-gray-900 mb-4">{result.title}</h3>
-                                <div className="prose prose-sm max-w-none text-gray-700">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4 text-left">{result.title}</h3>
+                                <div className="text-gray-700 text-sm leading-relaxed text-left">
                                   <div dangerouslySetInnerHTML={{
-                                    __html: result.content.text.replace(/\n\n/g, '</p><p>').replace(/^(.+)$/, '<p>$1</p>')
+                                    __html: result.content.text.replace(/\n\n/g, '</p><p class="mb-3">').replace(/^(.+)$/, '<p class="mb-3">$1</p>')
                                   }} />
                                 </div>
                               </div>
-                              <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
+                              <div className="px-5 py-3 bg-gradient-to-r from-green-50 to-gray-50 border-t border-gray-100">
                                 <div className="flex items-center justify-between text-xs text-gray-500">
-                                  <span>Source: {result.source}</span>
-                                  <span>AI Generated</span>
+                                  <span className="font-medium">{result.source}</span>
+                                  <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
+                                    AI Generated
+                                  </span>
                                 </div>
                               </div>
                             </>
@@ -1255,18 +1266,37 @@ export default function AgenticExperience() {
                       <div className="mt-8 flex justify-center gap-4 pt-6 border-t border-gray-200">
                         <button
                           onClick={() => setSearchResults([])}
-                          className="text-purple-600 hover:text-purple-700 font-medium text-sm"
+                          className="px-4 py-2 text-purple-600 hover:text-white hover:bg-purple-600 border border-purple-600 rounded-lg font-medium text-sm transition-all duration-200"
                         >
                           Clear Results
                         </button>
                         <button
                           onClick={() => window.location.reload()}
-                          className="text-gray-600 hover:text-gray-700 font-medium text-sm"
+                          className="px-4 py-2 text-gray-600 hover:text-white hover:bg-gray-600 border border-gray-600 rounded-lg font-medium text-sm transition-all duration-200"
                         >
                           New Search
                         </button>
                       </div>
                     )}
+
+                    {/* Clear separator between search results and hot topics */}
+                    <div className="mt-12 mb-8 flex items-center">
+                      <div className="flex-grow border-t-2 border-gray-200"></div>
+                      <div className="mx-6 text-gray-400 text-sm font-medium">
+                        {searchResults.length > 0 ? 'Explore More Topics' : ''}
+                      </div>
+                      <div className="flex-grow border-t-2 border-gray-200"></div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Hot Topics Section Header */}
+                {searchResults.length === 0 && (
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Explore Hot Topics</h2>
+                    <p className="text-gray-600 max-w-2xl mx-auto">
+                      Discover the latest trends and insights in AI-powered digital experiences
+                    </p>
                   </div>
                 )}
               </div>
