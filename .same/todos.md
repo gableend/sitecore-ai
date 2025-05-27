@@ -15,7 +15,10 @@
    - Converted to .cjs format with proper Netlify Functions syntax (exports.handler)
    - Resolved UTF-8 encoding issue that was causing "Unexpected character '�'" build errors
    - Recreated semantic-search.cjs with clean encoding and proper CommonJS format
-   - Function now loads correctly but needs OPENAI_API_KEY environment variable
+   - Fixed data structure mismatch causing "Cannot read properties of undefined (reading 'text')" error
+   - API now returns proper content.text format expected by React components
+   - Function loads correctly and integrates with streaming search UI
+   - Still needs OPENAI_API_KEY environment variable for full functionality
    - Deployed successfully as version 68
 
 3. **Semantic Search Implementation** - *completed*
