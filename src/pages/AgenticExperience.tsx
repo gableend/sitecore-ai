@@ -3,6 +3,7 @@ import LightWavesBackground from '../components/StarryBackground';
 import Navigation from '../components/Navigation';
 import KeyAIConcepts from '../components/KeyAIConcepts';
 import DigitalVisionaries, { digitalVisionariesData } from '../components/DigitalVisionaries';
+import ReportsAndInsights from '../components/ReportsAndInsights';
 import { Link, useSearchParams } from 'react-router-dom';
 
 // Add Speech Recognition types
@@ -1783,6 +1784,9 @@ export default function AgenticExperience() {
           </div>
         </div>
       )}
+
+      {/* Reports and Insights Section */}
+      <ReportsAndInsights />
 
       <footer className="mt-8 text-center text-sm text-gray-500 w-full">
         <div className="border-t border-gray-200 pt-8 pb-10 w-full max-w-lg mx-auto px-4">
