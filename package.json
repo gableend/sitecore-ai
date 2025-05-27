@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@fontsource/dm-sans": "^5.2.5",
+    "openai": "^4.103.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-markdown": "^10.1.0",
