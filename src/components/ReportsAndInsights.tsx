@@ -19,7 +19,7 @@ const reports: Report[] = [
   {
     id: 'websites-2025',
     title: 'Websites 2025 report: How marketers are adapting to changing digital trends',
-    description: 'This report explores the evolution of websites, revealing how global organizations are leveraging AI, personalization, and scalable CMS platforms to deliver unmatched user experiences and meet rising customer expectations.',
+    description: 'This report examines how global organizations are evolving their websites using AI, personalization, and scalable CMS platforms to meet rising customer expectations.',
     image: 'https://delivery-sitecore.sitecorecontenthub.cloud/api/public/content/8bcb1dbbd8044281b33d05cc07a5b238?t=sc700x700',
     pdfUrl: 'https://delivery-sitecore.sitecorecontenthub.cloud/api/public/content/36b4155047a249ea9437cc8f0a3adbb2?v=d63fcb2e'
   }
@@ -55,14 +55,14 @@ export default function ReportsAndInsights() {
   };
 
   return (
-    <div className="py-20 bg-gradient-to-br from-gray-50 to-white">
+    <div className="py-16 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Reports and Insights
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-8">
             Dive deeper into key experience and AI related topics
           </p>
         </div>
