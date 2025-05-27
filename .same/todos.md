@@ -13,8 +13,10 @@
    - Converted ES6 imports to CommonJS for Netlify Functions compatibility
    - Added openai dependency to package.json
    - Converted to .cjs format with proper Netlify Functions syntax (exports.handler)
+   - Resolved UTF-8 encoding issue that was causing "Unexpected character '�'" build errors
+   - Recreated semantic-search.cjs with clean encoding and proper CommonJS format
    - Function now loads correctly but needs OPENAI_API_KEY environment variable
-   - Deployed successfully as version 67
+   - Deployed successfully as version 68
 
 3. **Semantic Search Implementation** - *completed*
    - Created semantic search API endpoint using OpenAI embeddings
