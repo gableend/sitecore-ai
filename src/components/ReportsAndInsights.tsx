@@ -55,14 +55,14 @@ export default function ReportsAndInsights() {
   };
 
   return (
-    <div className="py-16 bg-gradient-to-br from-gray-50 to-white">
+    <div className="py-16 bg-white">
       <div className="max-w-6xl mx-auto px-6">
-        {/* Section Header */}
+        {/* Section Header - matching other sections */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             Reports and Insights
           </h2>
-          <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-8">
+          <p className="text-xl text-gray-600 max-w-4xl mx-auto">
             Dive deeper into key experience and AI related topics
           </p>
         </div>
