@@ -8,13 +8,20 @@
    - Build now passes without errors
    - Deployed successfully as version 65
 
-2. **Semantic Search Implementation** - *completed*
+2. **Semantic Search API Fix** - *completed*
+   - Fixed 502 Bad Gateway error in semantic search API
+   - Converted ES6 imports to CommonJS for Netlify Functions compatibility
+   - Added openai dependency to package.json
+   - Semantic search API now properly deployed and functional
+   - Deployed successfully as version 66
+
+3. **Semantic Search Implementation** - *completed*
    - Created semantic search API endpoint using OpenAI embeddings
    - Integrated semantic search into React search flow
    - Implemented progressive streaming of search results
    - Added fallback to keyword search for better coverage
 
-3. **Search UI Enhancement** - *completed*
+4. **Search UI Enhancement** - *completed*
    - Implemented Sitecore Search style with streaming results
    - Added mixed content types (text, images, AI responses)
    - Progressive loading with simulated network delays
