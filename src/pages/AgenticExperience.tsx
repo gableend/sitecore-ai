@@ -956,13 +956,7 @@ export default function AgenticExperience() {
   };
 
   const simulateStreamingSearch = async (query: string, mode: 'search' | 'stream') => {
-    // Scroll to results area first
-    setTimeout(() => {
-      const resultsElement = document.getElementById('search-results-container');
-      if (resultsElement) {
-        resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 100);
+    // Keep focus at top - no scrolling during search
 
     if (mode === 'search') {
       // Use semantic search API for better intent matching
@@ -1110,32 +1104,33 @@ export default function AgenticExperience() {
                 {/* Search Component */}
                 <SearchComponent onSearch={handleSearch} />
 
-                {/* Search Results - Grid Layout */}
+                {/* Search Results Container */}
                 {(isSearching || searchResults.length > 0) && (
-                  <div id="search-results-container" className="mb-16">
-                    {/* Search Header */}
-                    <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-purple-200">
-                      <div className="flex items-center gap-3">
-                        <div className="text-purple-600 text-lg font-semibold">🔍 Search Results</div>
-                        {isSearching && (
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <div className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-purple-500 rounded-full"></div>
-                            <span>Finding relevant content...</span>
-                          </div>
-                        )}
-                        {!isSearching && searchResults.length > 0 && (
-                          <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                            {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
-                          </div>
-                        )}
+                  <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-16">
+                    <div id="search-results-container">
+                      {/* Search Header */}
+                      <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-purple-200">
+                        <div className="flex items-center gap-3">
+                          <div className="text-purple-600 text-lg font-semibold">🔍 Search Results</div>
+                          {isSearching && (
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                              <div className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-purple-500 rounded-full"></div>
+                              <span>Finding relevant content...</span>
+                            </div>
+                          )}
+                          {!isSearching && searchResults.length > 0 && (
+                            <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                              {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-500">
-                        {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </div>
-                    </div>
 
-                    {/* Search Results Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {/* Search Results Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {searchResults.map((result, index) => (
                         <div
                           key={`${result.id}-${index}`}
@@ -1261,44 +1256,34 @@ export default function AgenticExperience() {
                       ))}
                     </div>
 
-                    {/* Search Actions */}
-                    {searchResults.length > 0 && !isSearching && (
-                      <div className="mt-8 flex justify-center gap-4 pt-6 border-t border-gray-200">
-                        <button
-                          onClick={() => setSearchResults([])}
-                          className="px-4 py-2 text-purple-600 hover:text-white hover:bg-purple-600 border border-purple-600 rounded-lg font-medium text-sm transition-all duration-200"
-                        >
-                          Clear Results
-                        </button>
-                        <button
-                          onClick={() => window.location.reload()}
-                          className="px-4 py-2 text-gray-600 hover:text-white hover:bg-gray-600 border border-gray-600 rounded-lg font-medium text-sm transition-all duration-200"
-                        >
-                          New Search
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Clear separator between search results and hot topics */}
-                    <div className="mt-12 mb-8 flex items-center">
-                      <div className="flex-grow border-t-2 border-gray-200"></div>
-                      <div className="mx-6 text-gray-400 text-sm font-medium">
-                        {searchResults.length > 0 ? 'Explore More Topics' : ''}
-                      </div>
-                      <div className="flex-grow border-t-2 border-gray-200"></div>
+                      {/* Search Actions */}
+                      {searchResults.length > 0 && !isSearching && (
+                        <div className="mt-8 flex justify-center gap-4 pt-6 border-t border-gray-200">
+                          <button
+                            onClick={() => setSearchResults([])}
+                            className="px-4 py-2 text-purple-600 hover:text-white hover:bg-purple-600 border border-purple-600 rounded-lg font-medium text-sm transition-all duration-200"
+                          >
+                            Clear Results
+                          </button>
+                          <button
+                            onClick={() => window.location.reload()}
+                            className="px-4 py-2 text-gray-600 hover:text-white hover:bg-gray-600 border border-gray-600 rounded-lg font-medium text-sm transition-all duration-200"
+                          >
+                            New Search
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
 
-                {/* Hot Topics Section Header */}
-                {searchResults.length === 0 && (
-                  <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Explore Hot Topics</h2>
-                    <p className="text-gray-600 max-w-2xl mx-auto">
-                      Discover the latest trends and insights in AI-powered digital experiences
-                    </p>
-                  </div>
-                )}
+                {/* Hot Topics Section */}
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">Hot Topics</h2>
+                  <p className="text-gray-600 max-w-2xl mx-auto">
+                    Discover the latest trends and insights in AI-powered digital experiences
+                  </p>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
