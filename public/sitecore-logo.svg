@@ -1,0 +1,15 @@
+<svg width="240" height="60" viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Red Circle Symbol -->
+  <circle cx="30" cy="30" r="25" fill="#EB001A"/>
+
+  <!-- Inner White Design -->
+  <path d="M30 14C39.5 14 47 21.5 47 31C47 40.5 39.5 48 30 48" stroke="white" stroke-width="3" fill="none"/>
+  <path d="M32 24C34.5 24 36.5 26 36.5 28.5C36.5 31 34.5 33 32 33" stroke="white" stroke-width="2" fill="none"/>
+  <path d="M47 30H45C45 39 38 45 30 45V47" stroke="white" stroke-width="2" fill="none"/>
+
+  <!-- SITECORE Text -->
+  <text x="70" y="36" font-family="Arial, sans-serif" font-weight="bold" font-size="20" fill="black">SITECORE</text>
+
+  <!-- Registered Trademark Symbol -->
+  <text x="175" y="28" font-family="Arial, sans-serif" font-size="10" fill="black">®</text>
+</svg>
